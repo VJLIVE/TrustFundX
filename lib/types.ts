@@ -30,5 +30,8 @@ export interface Milestone {
   amount: number;
   approvals: number;
   paid: boolean;
+  submissionNote?: string;
+  submissionFileUrl?: string;
+  submittedAt?: Date;
   createdAt?: Date;
 }

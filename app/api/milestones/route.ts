@@ -65,7 +65,7 @@ export async function GET(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   try {
-    const { milestoneDbId, approvals, paid, status } = await request.json();
+    const { milestoneDbId, approvals, paid, status, submissionNote, submissionFileUrl } = await request.json();
 
     if (!milestoneDbId) {
       return NextResponse.json(
@@ -81,6 +81,14 @@ export async function PATCH(request: NextRequest) {
     if (approvals !== undefined) updateData.approvals = approvals;
     if (paid !== undefined) updateData.paid = paid;
     if (status !== undefined) updateData.status = status;
+    if (submissionNote !== undefined) {
+      updateData.submissionNote = submissionNote;
+      updateData.submittedAt = new Date();
+    }
+    if (submissionFileUrl !== undefined) {
+      updateData.submissionFileUrl = submissionFileUrl;
+      if (!updateData.submittedAt) updateData.submittedAt = new Date();
+    }
 
     const { ObjectId } = require('mongodb');
     const result = await db.collection('milestones').updateOne(

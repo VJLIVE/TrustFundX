@@ -276,10 +276,42 @@ export default function VoterDashboard() {
                       </div>
                       <span className="text-lg font-bold text-green-600">{milestone.amount} ALGO</span>
                     </div>
+                    
+                    {/* Team Submission */}
+                    {(milestone.submissionNote || milestone.submissionFileUrl) && (
+                      <div className="mb-3 p-3 bg-blue-50 rounded-lg">
+                        <p className="text-sm font-semibold text-blue-800 mb-2">Team Submission:</p>
+                        {milestone.submissionNote && (
+                          <div className="mb-2">
+                            <p className="text-xs text-gray-600 mb-1">Note:</p>
+                            <p className="text-sm text-gray-800">{milestone.submissionNote}</p>
+                          </div>
+                        )}
+                        {milestone.submissionFileUrl && (
+                          <div className="mb-2">
+                            <p className="text-xs text-gray-600 mb-1">Document:</p>
+                            <a 
+                              href={milestone.submissionFileUrl} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-sm text-blue-600 hover:underline inline-flex items-center"
+                            >
+                              📄 View Submission PDF
+                            </a>
+                          </div>
+                        )}
+                        {milestone.submittedAt && (
+                          <p className="text-xs text-gray-500">
+                            Submitted: {new Date(milestone.submittedAt).toLocaleString()}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                    
                     <div className="flex justify-between items-center">
                       <div className="text-sm">
                         <span className="text-gray-600">Approvals: </span>
-                        <span className="font-medium">{milestone.approvals}</span>
+                        <span className="font-medium text-gray-800">{milestone.approvals}</span>
                         {grant && (
                           <span className="text-gray-600"> / {grant.requiredVotes} required</span>
                         )}
@@ -335,10 +367,37 @@ export default function VoterDashboard() {
                       </div>
                       <span className="text-lg font-bold text-green-600">{milestone.amount} ALGO</span>
                     </div>
+                    
+                    {/* Team Submission */}
+                    {(milestone.submissionNote || milestone.submissionFileUrl) && (
+                      <div className="mb-2 p-3 bg-white rounded-lg">
+                        <p className="text-sm font-semibold text-blue-800 mb-2">Team Submission:</p>
+                        {milestone.submissionNote && (
+                          <div className="mb-2">
+                            <p className="text-xs text-gray-600 mb-1">Note:</p>
+                            <p className="text-sm text-gray-800">{milestone.submissionNote}</p>
+                          </div>
+                        )}
+                        {milestone.submissionFileUrl && (
+                          <div>
+                            <p className="text-xs text-gray-600 mb-1">Document:</p>
+                            <a 
+                              href={milestone.submissionFileUrl} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-sm text-blue-600 hover:underline"
+                            >
+                              📄 View Submission PDF
+                            </a>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    
                     <div className="flex justify-between text-sm">
                       <div>
                         <span className="text-gray-600">Approvals: </span>
-                        <span className="font-medium">{milestone.approvals}</span>
+                        <span className="font-medium text-gray-800">{milestone.approvals}</span>
                         {grant && (
                           <span className="text-gray-600"> / {grant.requiredVotes} required</span>
                         )}
