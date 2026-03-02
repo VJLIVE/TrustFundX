@@ -220,15 +220,15 @@ export default function VoterDashboard() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <p className="text-sm text-gray-600">Email</p>
-              <p className="font-medium">{user.email}</p>
+              <p className="font-medium text-gray-800">{user.email}</p>
             </div>
             <div>
               <p className="text-sm text-gray-600">Organization</p>
-              <p className="font-medium">{user.organization}</p>
+              <p className="font-medium text-gray-800">{user.organization}</p>
             </div>
             <div className="md:col-span-2">
               <p className="text-sm text-gray-600">Wallet Address</p>
-              <p className="font-mono text-sm">{user.walletAddress}</p>
+              <p className="font-mono text-sm text-gray-800">{user.walletAddress}</p>
             </div>
           </div>
         </div>

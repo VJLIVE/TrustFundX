@@ -63,7 +63,7 @@ export default function FixFundingPage() {
               value={grantId}
               onChange={(e) => setGrantId(e.target.value)}
               placeholder="Enter Grant ID (e.g., 507f1f77bcf86cd799439011)"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-800 placeholder-gray-400"
             />
             <p className="text-xs text-gray-500 mt-1">
               You can find this in the URL when viewing a grant or in the grant list
@@ -80,7 +80,7 @@ export default function FixFundingPage() {
               value={fundedAmount}
               onChange={(e) => setFundedAmount(e.target.value)}
               placeholder="Enter amount in ALGO"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-800 placeholder-gray-400"
             />
             <p className="text-xs text-gray-500 mt-1">
               Enter the total amount you've funded to this grant (e.g., 10)

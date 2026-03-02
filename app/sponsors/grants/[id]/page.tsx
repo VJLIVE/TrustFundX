@@ -155,7 +155,7 @@ export default function GrantDetailPage() {
     }
   };
 
-  if (!grant) return <div className="p-8">Loading...</div>;
+  if (!grant) return <div className="p-8 text-gray-800">Loading...</div>;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -182,30 +182,30 @@ export default function GrantDetailPage() {
 
         {/* Grant Info */}
         <div className="bg-white rounded-lg shadow p-6 mb-6">
-          <h2 className="text-2xl font-bold mb-4">Grant Information</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">Grant Information</h2>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <p className="text-sm text-gray-600">Team Address</p>
-              <p className="font-mono text-sm">{grant.teamAddress}</p>
+              <p className="font-mono text-sm text-gray-800">{grant.teamAddress}</p>
             </div>
             <div>
               <p className="text-sm text-gray-600">Status</p>
-              <p className="font-medium">{grant.status}</p>
+              <p className="font-medium text-gray-800">{grant.status}</p>
             </div>
             <div>
               <p className="text-sm text-gray-600">Required Votes</p>
-              <p className="font-medium">{grant.requiredVotes}</p>
+              <p className="font-medium text-gray-800">{grant.requiredVotes}</p>
             </div>
             <div>
               <p className="text-sm text-gray-600">Milestone Count</p>
-              <p className="font-medium">{grant.milestoneCount}</p>
+              <p className="font-medium text-gray-800">{grant.milestoneCount}</p>
             </div>
           </div>
         </div>
 
         {/* Fund Contract */}
         <div className="bg-white rounded-lg shadow p-6 mb-6">
-          <h3 className="text-xl font-bold mb-4">Fund Contract</h3>
+          <h3 className="text-xl font-bold text-gray-800 mb-4">Fund Contract</h3>
           <div className="flex gap-4">
             <input
               type="number"
@@ -213,7 +213,7 @@ export default function GrantDetailPage() {
               value={fundAmount}
               onChange={(e) => setFundAmount(e.target.value)}
               placeholder="Amount in ALGO"
-              className="flex-1 px-4 py-2 border rounded-lg"
+              className="flex-1 px-4 py-2 border rounded-lg text-gray-800 placeholder-gray-400"
             />
             <button
               onClick={handleFundContract}
@@ -227,21 +227,21 @@ export default function GrantDetailPage() {
 
         {/* Add Voter */}
         <div className="bg-white rounded-lg shadow p-6 mb-6">
-          <h3 className="text-xl font-bold mb-4">Add Voter</h3>
+          <h3 className="text-xl font-bold text-gray-800 mb-4">Add Voter</h3>
           <div className="space-y-4">
             <input
               type="text"
               value={voterName}
               onChange={(e) => setVoterName(e.target.value)}
               placeholder="Voter Name"
-              className="w-full px-4 py-2 border rounded-lg"
+              className="w-full px-4 py-2 border rounded-lg text-gray-800 placeholder-gray-400"
             />
             <input
               type="text"
               value={voterAddress}
               onChange={(e) => setVoterAddress(e.target.value)}
               placeholder="Voter Wallet Address"
-              className="w-full px-4 py-2 border rounded-lg"
+              className="w-full px-4 py-2 border rounded-lg text-gray-800 placeholder-gray-400"
             />
             <button
               onClick={handleAddVoter}
@@ -253,12 +253,12 @@ export default function GrantDetailPage() {
           </div>
 
           <div className="mt-6">
-            <h4 className="font-semibold mb-2">Registered Voters ({voters.length})</h4>
+            <h4 className="font-semibold text-gray-800 mb-2">Registered Voters ({voters.length})</h4>
             <div className="space-y-2">
               {voters.map((voter) => (
                 <div key={voter._id} className="flex justify-between items-center p-3 bg-gray-50 rounded">
                   <div>
-                    <p className="font-medium">{voter.voterName || 'Anonymous'}</p>
+                    <p className="font-medium text-gray-800">{voter.voterName || 'Anonymous'}</p>
                     <p className="text-sm text-gray-600 font-mono">{voter.voterAddress}</p>
                   </div>
                   <span className="text-sm text-green-600">{voter.status}</span>
@@ -270,7 +270,7 @@ export default function GrantDetailPage() {
 
         {/* Add Milestone */}
         <div className="bg-white rounded-lg shadow p-6 mb-6">
-          <h3 className="text-xl font-bold mb-4">Add Milestone</h3>
+          <h3 className="text-xl font-bold text-gray-800 mb-4">Add Milestone</h3>
           <div className="space-y-4">
             <input
               type="number"
@@ -278,13 +278,13 @@ export default function GrantDetailPage() {
               value={milestoneAmount}
               onChange={(e) => setMilestoneAmount(e.target.value)}
               placeholder="Amount in ALGO"
-              className="w-full px-4 py-2 border rounded-lg"
+              className="w-full px-4 py-2 border rounded-lg text-gray-800 placeholder-gray-400"
             />
             <textarea
               value={milestoneDesc}
               onChange={(e) => setMilestoneDesc(e.target.value)}
               placeholder="Milestone Description"
-              className="w-full px-4 py-2 border rounded-lg"
+              className="w-full px-4 py-2 border rounded-lg text-gray-800 placeholder-gray-400"
               rows={3}
             />
             <button
@@ -297,19 +297,19 @@ export default function GrantDetailPage() {
           </div>
 
           <div className="mt-6">
-            <h4 className="font-semibold mb-2">Milestones ({milestones.length})</h4>
+            <h4 className="font-semibold text-gray-800 mb-2">Milestones ({milestones.length})</h4>
             <div className="space-y-2">
               {milestones.map((milestone) => (
                 <div key={milestone._id} className="p-4 bg-gray-50 rounded">
                   <div className="flex justify-between items-start mb-2">
                     <div>
-                      <p className="font-medium">Milestone #{milestone.milestoneId}</p>
+                      <p className="font-medium text-gray-800">Milestone #{milestone.milestoneId}</p>
                       <p className="text-sm text-gray-600">{milestone.description}</p>
                     </div>
                     <span className="text-lg font-bold text-green-600">{milestone.amount} ALGO</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span>Approvals: {milestone.approvals}</span>
+                    <span className="text-gray-800">Approvals: {milestone.approvals}</span>
                     <span className={milestone.paid ? 'text-green-600' : 'text-gray-600'}>
                       {milestone.paid ? 'Paid' : 'Pending'}
                     </span>

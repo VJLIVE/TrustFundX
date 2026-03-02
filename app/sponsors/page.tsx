@@ -175,15 +175,15 @@ export default function SponsorDashboard() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <p className="text-sm text-gray-600">Email</p>
-              <p className="font-medium">{user.email}</p>
+              <p className="font-medium text-gray-800">{user.email}</p>
             </div>
             <div>
               <p className="text-sm text-gray-600">Organization</p>
-              <p className="font-medium">{user.organization}</p>
+              <p className="font-medium text-gray-800">{user.organization}</p>
             </div>
             <div className="md:col-span-2">
               <p className="text-sm text-gray-600">Wallet Address</p>
-              <p className="font-mono text-sm">{user.walletAddress}</p>
+              <p className="font-mono text-sm text-gray-800">{user.walletAddress}</p>
             </div>
           </div>
         </div>
@@ -228,7 +228,7 @@ export default function SponsorDashboard() {
                   value={teamAddress}
                   onChange={(e) => setTeamAddress(e.target.value)}
                   placeholder="Enter Algorand wallet address"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-800 placeholder-gray-400"
                 />
                 <p className="text-xs text-gray-500 mt-1">
                   Enter a valid Algorand address (58 characters)
@@ -244,7 +244,7 @@ export default function SponsorDashboard() {
                   min="1"
                   value={requiredVotes}
                   onChange={(e) => setRequiredVotes(parseInt(e.target.value) || 1)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-800"
                 />
               </div>
 
@@ -257,7 +257,7 @@ export default function SponsorDashboard() {
                   min="1"
                   value={milestoneCount}
                   onChange={(e) => setMilestoneCount(parseInt(e.target.value) || 1)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-800"
                 />
               </div>
             </div>
