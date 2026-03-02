@@ -62,7 +62,20 @@ export default function SignupPage() {
       }
 
       localStorage.setItem('user', JSON.stringify({ ...formData, walletAddress }));
-      router.push('/students');
+      
+      // Redirect based on role
+      switch (formData.role) {
+        case 'sponsor':
+          router.push('/sponsors');
+          break;
+        case 'voter':
+          router.push('/voters');
+          break;
+        case 'student':
+        default:
+          router.push('/students');
+          break;
+      }
     } catch (err: any) {
       setError(err.message);
     }
