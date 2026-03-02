@@ -6,47 +6,33 @@ import { useWallet } from '@/contexts/WalletContext';
 
 export default function LoginPage() {
   const router = useRouter();
-  const { connectWallet, accountAddress } = useWallet();
-  const [error, setError] = useState('');
+  const { connectWallet } = useWallet();
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleLogin = async () => {
     try {
       setLoading(true);
       setError('');
-      
+
       const accounts = await connectWallet();
-      
+
       if (accounts.length > 0) {
         const walletAddress = accounts[0];
-        
-        const response = await fetch('/api/auth/login', {
+
+        const res = await fetch('/api/auth/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ walletAddress }),
         });
 
-        const data = await response.json();
+        const data = await res.json();
 
-        if (!response.ok) {
-          throw new Error(data.error || 'Login failed');
-        }
+        if (!res.ok) throw new Error(data.error);
 
         localStorage.setItem('user', JSON.stringify(data.user));
 
-        switch (data.user.role) {
-          case 'student':
-            router.push('/students');
-            break;
-          case 'sponsor':
-            router.push('/sponsors');
-            break;
-          case 'voter':
-            router.push('/voters');
-            break;
-          default:
-            router.push('/students');
-        }
+        router.push(`/${data.user.role}s`);
       }
     } catch (err: any) {
       setError(err.message);
@@ -56,46 +42,72 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-      <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
-        <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">
-          Welcome Back
+    <div className="min-h-screen flex items-center justify-center bg-background px-4">
+      {/* Card */}
+      <div className="bg-card text-card-foreground w-full max-w-md rounded-xl border border-border shadow-sm p-8 text-center">
+        {/* Header */}
+        <p className="text-sm text-muted-foreground mb-6 font-medium">
+          Algorand × Pera
+        </p>
+
+        {/* Heading */}
+        <h1 className="text-2xl font-semibold tracking-tight mb-2 leading-snug">
+          Welcome Back to Your
+          <br />
+          Algorand Dashboard
         </h1>
 
-        <div className="space-y-6">
-          <div className="text-center">
-            <p className="text-gray-600 mb-4">
-              Connect your Pera Wallet to login
-            </p>
-            
-            {accountAddress && (
-              <div className="bg-green-50 text-green-700 p-3 rounded-lg text-sm mb-4">
-                Connected: {accountAddress.slice(0, 6)}...{accountAddress.slice(-4)}
-              </div>
-            )}
+        <p className="text-muted-foreground text-sm mb-6">
+          Connect your Pera Wallet to securely access features.
+        </p>
+
+        {/* Error */}
+        {error && (
+          <div className="mb-4 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md p-3 font-medium">
+            {error}
           </div>
+        )}
 
-          {error && (
-            <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm">
-              {error}
-            </div>
+        {/* Button */}
+        <button
+          onClick={handleLogin}
+          disabled={loading}
+          className="w-full bg-primary text-primary-foreground hover:bg-primary/90 font-medium h-10 px-4 py-2 rounded-md shadow-sm transition-colors flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+        >
+          {loading ? (
+            <>
+              <span className="animate-spin h-4 w-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full"></span>
+              <span>Connecting...</span>
+            </>
+          ) : (
+            <>
+              <span>Connect Pera Wallet</span>
+              <span className="text-primary-foreground/70">🔗</span>
+            </>
           )}
+        </button>
 
-          <button
-            onClick={handleLogin}
-            disabled={loading}
-            className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:bg-gray-400"
-          >
-            {loading ? 'Connecting...' : 'Connect Pera Wallet'}
-          </button>
-
-          <p className="text-center text-sm text-gray-600">
-            Don&apos;t have an account?{' '}
-            <a href="/signup" className="text-blue-600 hover:underline">
-              Sign up
-            </a>
-          </p>
+        {/* Divider */}
+        <div className="relative my-6">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t border-border" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-card px-2 text-muted-foreground">Or</span>
+          </div>
         </div>
+
+        {/* Footer */}
+        <p className="text-sm text-muted-foreground">
+          New to Algorand?{' '}
+          <a href="/signup" className="text-primary font-medium hover:underline underline-offset-4">
+            Create your Pera Wallet
+          </a>
+        </p>
+
+        <p className="text-xs text-muted-foreground/60 mt-6">
+          🔒 Secured by Pera Wallet
+        </p>
       </div>
     </div>
   );

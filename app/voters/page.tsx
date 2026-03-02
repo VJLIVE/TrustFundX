@@ -6,6 +6,15 @@ import { useWallet } from '@/contexts/WalletContext';
 import { approveMilestone } from '@/lib/contractMethods';
 import { checkVoteExists, checkVoterRegistered, checkMilestoneExists } from '@/lib/diagnostics';
 import { syncMilestoneFromBlockchain } from '@/lib/syncBlockchain';
+import {
+  CheckCircle,
+  Clock,
+  Users as UserGroupIcon,
+  FileText as DocumentTextIcon,
+  RefreshCw as ArrowPathIcon,
+  XCircle as XCircleIcon,
+  ChevronRight as ChevronRightIcon
+} from 'lucide-react';
 
 export default function VoterDashboard() {
   const router = useRouter();
@@ -13,7 +22,7 @@ export default function VoterDashboard() {
   const [user, setUser] = useState<any>(null);
   const [grants, setGrants] = useState<any[]>([]);
   const [milestones, setMilestones] = useState<any[]>([]);
-  const [loading, setLoading] = useState<string | null>(null); // Store milestone ID being approved
+  const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -22,13 +31,13 @@ export default function VoterDashboard() {
       router.push('/login');
       return;
     }
-    
+
     const parsedUser = JSON.parse(userData);
     if (parsedUser.role !== 'voter') {
       router.push('/login');
       return;
     }
-    
+
     setUser(parsedUser);
   }, [router]);
 
@@ -36,41 +45,35 @@ export default function VoterDashboard() {
     if (user && accountAddress) {
       fetchVoterData();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, accountAddress]);
 
   const fetchVoterData = async () => {
     if (!accountAddress) return;
-    
+
     try {
-      // Fetch grants where this user is a voter
       const votersRes = await fetch(`/api/voters?voterAddress=${accountAddress}`);
       const votersData = await votersRes.json();
-      
+
       if (votersData.voters && votersData.voters.length > 0) {
-        const grantIds: string[] = Array.from(new Set(votersData.voters.map((v: any) => v.grantId as string))); // Remove duplicates
-        
-        // Fetch grant details
-        const grantsPromises = grantIds.map((id: string) => 
+        const grantIds: string[] = Array.from(new Set(votersData.voters.map((v: any) => v.grantId as string)));
+
+        const grantsPromises = grantIds.map((id: string) =>
           fetch(`/api/grants?_id=${id}`).then(r => r.json())
         );
         const grantsResults = await Promise.all(grantsPromises);
         const fetchedGrants = grantsResults.map(r => r.grants[0]).filter(Boolean);
         setGrants(fetchedGrants);
 
-        // Fetch milestones for these grants
         const milestonesPromises = grantIds.map((id: string) =>
           fetch(`/api/milestones?grantId=${id}`).then(r => r.json())
         );
         const milestonesResults = await Promise.all(milestonesPromises);
         const allMilestones = milestonesResults.flatMap(r => r.milestones || []);
-        
-        // Remove duplicates based on _id
+
         const uniqueMilestones = allMilestones.filter((milestone, index, self) =>
           index === self.findIndex((m) => m._id === milestone._id)
         );
-        
-        // Filter out milestones this voter has already voted on
+
         const milestonesWithVoteStatus = await Promise.all(
           uniqueMilestones.map(async (milestone) => {
             const hasVoted = await checkVoteExists(accountAddress, milestone.milestoneId);
@@ -80,7 +83,7 @@ export default function VoterDashboard() {
             };
           })
         );
-        
+
         setMilestones(milestonesWithVoteStatus);
       }
     } catch (err) {
@@ -95,29 +98,25 @@ export default function VoterDashboard() {
       setLoading(milestone._id);
       setError('');
 
-      // Check if voter is registered
       const isVoterRegistered = await checkVoterRegistered(accountAddress);
       if (!isVoterRegistered) {
         throw new Error(
           'You are not registered as a voter for this grant. ' +
-          'Please ask the sponsor to register your wallet address: ' + 
+          'Please ask the sponsor to register your wallet address: ' +
           accountAddress
         );
       }
 
-      // Check if milestone exists
       const milestoneExists = await checkMilestoneExists(milestone.milestoneId);
       if (!milestoneExists) {
         throw new Error('Milestone does not exist on the blockchain');
       }
 
-      // Check if already voted
       const alreadyVoted = await checkVoteExists(accountAddress, milestone.milestoneId);
       if (alreadyVoted) {
         throw new Error('You have already voted on this milestone');
       }
 
-      // Approve on blockchain
       const grant = grants.find(g => g._id === milestone.grantId);
       if (!grant) {
         throw new Error('Grant not found');
@@ -132,7 +131,6 @@ export default function VoterDashboard() {
 
       console.log('Blockchain approval successful:', txid);
 
-      // Sync milestone data from blockchain to database
       const synced = await syncMilestoneFromBlockchain(
         milestone._id,
         milestone.milestoneId
@@ -143,8 +141,6 @@ export default function VoterDashboard() {
       }
 
       alert(`Milestone approved! TX: ${txid}`);
-      
-      // Refresh data to show updated approvals
       await fetchVoterData();
     } catch (err: any) {
       console.error('Approval error:', err);
@@ -158,12 +154,12 @@ export default function VoterDashboard() {
     try {
       setLoading(milestone._id);
       setError('');
-      
+
       const synced = await syncMilestoneFromBlockchain(
         milestone._id,
         milestone.milestoneId
       );
-      
+
       if (synced) {
         alert('Milestone synced successfully!');
         await fetchVoterData();
@@ -184,272 +180,322 @@ export default function VoterDashboard() {
     router.push('/login');
   };
 
-  if (!user) return null;
+  if (!user) return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="animate-pulse bg-gray-200 rounded-xl h-12 w-12"></div>
+    </div>
+  );
 
-  // Pending milestones: not paid AND voter hasn't voted yet
   const pendingMilestones = milestones.filter(m => !m.paid && !m.hasVoted);
-  
-  // Total votes this voter has cast
   const totalVotesCast = milestones.filter(m => m.hasVoted).length;
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <h1 className="text-xl font-bold text-gray-800">Voter Dashboard</h1>
+      {/* Header */}
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center space-x-4">
+              <div className="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center shadow-sm">
+                <UserGroupIcon className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h1 className="text-lg font-semibold text-gray-900">
+                  Voter Dashboard
+                </h1>
+                <p className="text-sm text-gray-500">Review and approve milestones</p>
+              </div>
+            </div>
             <button
               onClick={handleLogout}
-              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              className="px-4 py-2 bg-white border border-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-50 shadow-sm transition-all duration-200 flex items-center space-x-2 text-sm"
             >
-              Logout
+              <span>Sign Out</span>
             </button>
           </div>
         </div>
-      </nav>
+      </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+        {/* Error Banner */}
         {error && (
-          <div className="bg-red-50 text-red-600 p-4 rounded-lg mb-6">
-            {error}
+          <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-start space-x-3 shadow-sm">
+            <XCircleIcon className="w-5 h-5 text-red-500 flex-shrink-0" />
+            <div>
+              <p className="font-semibold text-red-900 text-sm mt-0.5">{error}</p>
+            </div>
           </div>
         )}
 
-        <div className="bg-white rounded-lg shadow p-6 mb-6">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Welcome, {user.name}!</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <p className="text-sm text-gray-600">Email</p>
-              <p className="font-medium text-gray-800">{user.email}</p>
+        {/* Profile Card */}
+        <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 lg:p-8">
+          <div className="flex items-start space-x-5 mb-6">
+            <div className="w-16 h-16 bg-green-600 rounded-xl flex items-center justify-center shadow-sm">
+              <UserGroupIcon className="w-8 h-8 text-white" />
             </div>
             <div>
-              <p className="text-sm text-gray-600">Organization</p>
-              <p className="font-medium text-gray-800">{user.organization}</p>
+              <h2 className="text-xl font-semibold text-gray-900 mb-1">Hello, {user.name}!</h2>
+              <p className="text-sm text-gray-500">Voter Account</p>
             </div>
-            <div className="md:col-span-2">
-              <p className="text-sm text-gray-600">Wallet Address</p>
-              <p className="font-mono text-sm text-gray-800">{user.walletAddress}</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 border-t border-gray-100">
+            <div>
+              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Email</p>
+              <p className="text-sm font-medium text-gray-900">{user.email}</p>
+            </div>
+            <div>
+              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Organization</p>
+              <p className="text-sm font-medium text-gray-900">{user.organization}</p>
+            </div>
+            <div>
+              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Wallet Address</p>
+              <div className="flex items-center space-x-2 mt-1.5">
+                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <span className="text-sm font-mono text-gray-900">
+                  {user.walletAddress?.slice(0, 8)}...{user.walletAddress?.slice(-6)}
+                </span>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold text-gray-800 mb-2">Pending Votes</h3>
-            <p className="text-3xl font-bold text-blue-600">{pendingMilestones.length}</p>
-            <p className="text-sm text-gray-600 mt-2">Awaiting your vote</p>
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
+            <div className="flex items-center justify-between mb-2">
+              <div>
+                <p className="text-sm font-medium text-gray-500">Pending Actions</p>
+                <p className="text-2xl font-semibold text-gray-900 mt-1">
+                  {pendingMilestones.length}
+                </p>
+              </div>
+              <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
+                <Clock className="w-6 h-6 text-blue-600" />
+              </div>
+            </div>
+            <p className="text-xs text-gray-500 mt-1">Milestones awaiting your review</p>
           </div>
 
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold text-gray-800 mb-2">Total Votes Cast</h3>
-            <p className="text-3xl font-bold text-green-600">{totalVotesCast}</p>
-            <p className="text-sm text-gray-600 mt-2">Votes submitted</p>
+          <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
+            <div className="flex items-center justify-between mb-2">
+              <div>
+                <p className="text-sm font-medium text-gray-500">Votes Submitted</p>
+                <p className="text-2xl font-semibold text-gray-900 mt-1">
+                  {totalVotesCast}
+                </p>
+              </div>
+              <div className="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center">
+                <CheckCircle className="w-6 h-6 text-green-600" />
+              </div>
+            </div>
+            <p className="text-xs text-gray-500 mt-1">Total approvals cast</p>
           </div>
 
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold text-gray-800 mb-2">Grants</h3>
-            <p className="text-3xl font-bold text-purple-600">{grants.length}</p>
-            <p className="text-sm text-gray-600 mt-2">Assigned grants</p>
+          <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
+            <div className="flex items-center justify-between mb-2">
+              <div>
+                <p className="text-sm font-medium text-gray-500">Active Grants</p>
+                <p className="text-2xl font-semibold text-gray-900 mt-1">
+                  {grants.length}
+                </p>
+              </div>
+              <div className="w-12 h-12 bg-purple-50 rounded-lg flex items-center justify-center">
+                <UserGroupIcon className="w-6 h-6 text-purple-600" />
+              </div>
+            </div>
+            <p className="text-xs text-gray-500 mt-1">Projects you're reviewing</p>
           </div>
         </div>
 
         {/* Pending Approvals */}
-        <div className="mt-8 bg-white rounded-lg shadow p-6">
-          <h3 className="text-xl font-bold text-gray-800 mb-4">Pending Approvals</h3>
-          {pendingMilestones.length === 0 ? (
-            <p className="text-gray-600">No pending approvals</p>
-          ) : (
-            <div className="space-y-4">
-              {pendingMilestones.map((milestone, index) => {
-                const grant = grants.find(g => g._id === milestone.grantId);
-                return (
-                  <div key={`${milestone._id}-${index}`} className="border rounded-lg p-4">
-                    <div className="flex justify-between items-start mb-3">
-                      <div>
-                        <h4 className="font-semibold text-gray-800">Milestone #{milestone.milestoneId}</h4>
-                        <p className="text-sm text-gray-600">{milestone.description}</p>
-                        {grant && (
-                          <p className="text-xs text-gray-500 mt-1">
-                            Grant: {grant._id.slice(-6)} | Team: {grant.teamAddress.slice(0, 8)}...
-                          </p>
-                        )}
-                      </div>
-                      <span className="text-lg font-bold text-green-600">{milestone.amount} ALGO</span>
-                    </div>
-                    
-                    {/* Team Submission */}
-                    {(milestone.submissionNote || milestone.submissionFileUrl) && (
-                      <div className="mb-3 p-3 bg-blue-50 rounded-lg">
-                        <p className="text-sm font-semibold text-blue-800 mb-2">Team Submission:</p>
-                        {milestone.submissionNote && (
-                          <div className="mb-2">
-                            <p className="text-xs text-gray-600 mb-1">Note:</p>
-                            <p className="text-sm text-gray-800">{milestone.submissionNote}</p>
-                          </div>
-                        )}
-                        {milestone.submissionFileUrl && (
-                          <div className="mb-2">
-                            <p className="text-xs text-gray-600 mb-1">Document:</p>
-                            <a 
-                              href={milestone.submissionFileUrl} 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              className="text-sm text-blue-600 hover:underline inline-flex items-center"
-                            >
-                              📄 View Submission PDF
-                            </a>
-                          </div>
-                        )}
-                        {milestone.submittedAt && (
-                          <p className="text-xs text-gray-500">
-                            Submitted: {new Date(milestone.submittedAt).toLocaleString()}
-                          </p>
-                        )}
-                      </div>
-                    )}
-                    
-                    <div className="flex justify-between items-center">
-                      <div className="text-sm">
-                        <span className="text-gray-600">Approvals: </span>
-                        <span className="font-medium text-gray-800">{milestone.approvals}</span>
-                        {grant && (
-                          <span className="text-gray-600"> / {grant.requiredVotes} required</span>
-                        )}
-                      </div>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handleSyncMilestone(milestone)}
-                          disabled={loading !== null}
-                          className="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 text-sm"
-                          title="Sync from blockchain"
-                        >
-                          🔄 Sync
-                        </button>
-                        <button
-                          onClick={() => handleApprove(milestone)}
-                          disabled={loading !== null}
-                          className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-400"
-                        >
-                          {loading === milestone._id ? 'Processing...' : 'Approve'}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+        <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+          <div className="bg-gray-50 border-b border-gray-200 px-6 py-4">
+            <div className="flex items-center space-x-3">
+              <Clock className="w-5 h-5 text-gray-600" />
+              <h3 className="text-lg font-semibold text-gray-900">Pending Approvals</h3>
+              {pendingMilestones.length > 0 && (
+                <div className="ml-auto px-2.5 py-0.5 bg-white text-gray-600 text-xs font-medium rounded-full border border-gray-200">
+                  {pendingMilestones.length} waiting
+                </div>
+              )}
             </div>
-          )}
+          </div>
+
+          <div className="p-6">
+            {pendingMilestones.length === 0 ? (
+              <div className="text-center py-16">
+                <div className="w-16 h-16 mx-auto bg-gray-50 rounded-full flex items-center justify-center mb-4">
+                  <Clock className="w-8 h-8 text-gray-400" />
+                </div>
+                <h4 className="text-lg font-semibold text-gray-900 mb-2">Nothing to review</h4>
+                <p className="text-sm text-gray-500 max-w-sm mx-auto">
+                  All milestones are either approved or awaiting other voters. You'll be notified when new submissions arrive.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {pendingMilestones.map((milestone) => {
+                  const grant = grants.find(g => g._id === milestone.grantId);
+                  return (
+                    <div key={milestone._id} className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-md transition-shadow">
+                      <div className="flex items-start justify-between mb-5">
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <h4 className="text-base font-semibold text-gray-900">Milestone #{milestone.milestoneId}</h4>
+                          </div>
+                          <p className="text-sm text-gray-600 mb-3">{milestone.description}</p>
+                          {grant && (
+                            <div className="flex items-center space-x-2 text-xs text-gray-500 bg-gray-50 px-2.5 py-1 rounded-md w-fit border border-gray-100">
+                              <span>Grant #{grant._id.slice(-6)}</span>
+                              <span>•</span>
+                              <span className="font-mono">{grant.teamAddress.slice(0, 8)}...{grant.teamAddress.slice(-6)}</span>
+                            </div>
+                          )}
+                        </div>
+                        <div className="text-right flex flex-col items-end space-y-1">
+                          <div className="text-xl font-bold text-green-600">
+                            {milestone.amount} ALGO
+                          </div>
+                          <div className="flex items-center space-x-1 text-xs text-gray-500 mt-2">
+                            <span>Progress:</span>
+                            <div className="w-16 bg-gray-200 rounded-full h-1.5 ml-1">
+                              <div
+                                className="bg-blue-600 h-1.5 rounded-full"
+                                style={{ width: `${Math.min((milestone.approvals || 0) / (grant?.requiredVotes || 1) * 100, 100)}%` }}
+                              />
+                            </div>
+                            <span className="font-semibold text-gray-700 ml-1">{milestone.approvals || 0}</span>
+                            {grant && <span>/ {grant.requiredVotes}</span>}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Team Submission */}
+                      {(milestone.submissionNote || milestone.submissionFileUrl) && (
+                        <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-5">
+                          <div className="flex items-center space-x-2 mb-3">
+                            <DocumentTextIcon className="w-4 h-4 text-gray-600" />
+                            <h5 className="font-medium text-gray-900 text-sm">Team Submission</h5>
+                          </div>
+                          {milestone.submissionNote && (
+                            <div className="mb-3">
+                              <div className="flex items-center gap-1.5 mb-1 text-xs font-medium text-gray-600">
+                                <DocumentTextIcon className="w-3.5 h-3.5" />
+                                <p>Notes</p>
+                              </div>
+                              <p className="text-sm text-gray-800">{milestone.submissionNote}</p>
+                            </div>
+                          )}
+                          {milestone.submissionFileUrl && (
+                            <div className="mb-3">
+                              <div className="flex items-center gap-1.5 mb-1 text-xs font-medium text-gray-600">
+                                <DocumentTextIcon className="w-3.5 h-3.5" />
+                                <p>Documentation</p>
+                              </div>
+                              <a
+                                href={milestone.submissionFileUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center px-3 py-1.5 bg-white border border-gray-200 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                              >
+                                <DocumentTextIcon className="w-4 h-4 mr-2 text-gray-400" />
+                                View PDF
+                              </a>
+                            </div>
+                          )}
+                          {milestone.submittedAt && (
+                            <p className="text-xs text-gray-500 mt-2">
+                              Submitted {new Date(milestone.submittedAt).toLocaleDateString()}
+                            </p>
+                          )}
+                        </div>
+                      )}
+
+                      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-gray-100">
+                        <div className="text-xs text-gray-500">
+                          Your vote releases funds to the team.
+                        </div>
+                        <div className="flex gap-2 w-full sm:w-auto">
+                          <button
+                            onClick={() => handleSyncMilestone(milestone)}
+                            disabled={loading === milestone._id}
+                            className="flex-1 sm:flex-none flex items-center justify-center space-x-2 px-4 py-2 bg-white border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            <ArrowPathIcon className="w-4 h-4 text-gray-500" />
+                            <span>Sync</span>
+                          </button>
+                          <button
+                            onClick={() => handleApprove(milestone)}
+                            disabled={loading === milestone._id}
+                            className="flex-1 sm:flex-none flex items-center justify-center space-x-2 px-5 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+                          >
+                            {loading === milestone._id ? (
+                              <>
+                                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                <span>Processing</span>
+                              </>
+                            ) : (
+                              <>
+                                <CheckCircle className="w-4 h-4" />
+                                <span>Approve</span>
+                              </>
+                            )}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* Approved Milestones */}
-        <div className="mt-8 bg-white rounded-lg shadow p-6">
-          <h3 className="text-xl font-bold text-gray-800 mb-4">Your Approved Milestones</h3>
-          {milestones.filter(m => m.hasVoted).length === 0 ? (
-            <p className="text-gray-600">You haven't approved any milestones yet</p>
-          ) : (
-            <div className="space-y-4">
-              {milestones.filter(m => m.hasVoted).map((milestone, index) => {
+        {/* Recent Activity - Approved Milestones */}
+        {milestones.filter(m => m.hasVoted).length > 0 && (
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">Your Recent Approvals</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {milestones.filter(m => m.hasVoted).slice(0, 6).map((milestone) => {
                 const grant = grants.find(g => g._id === milestone.grantId);
                 return (
-                  <div key={`${milestone._id}-approved-${index}`} className="border rounded-lg p-4 bg-green-50">
-                    <div className="flex justify-between items-start mb-2">
-                      <div>
-                        <h4 className="font-semibold text-gray-800">
-                          Milestone #{milestone.milestoneId}
-                          <span className="ml-2 text-xs bg-green-600 text-white px-2 py-1 rounded">✓ Voted</span>
+                  <div key={milestone._id} className="bg-white border border-gray-200 rounded-xl p-5 hover:shadow-sm transition-shadow">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="space-y-1">
+                        <h4 className="font-medium text-sm text-gray-900">
+                          M#{milestone.milestoneId}
                         </h4>
-                        <p className="text-sm text-gray-600">{milestone.description}</p>
-                        {grant && (
-                          <p className="text-xs text-gray-500 mt-1">
-                            Grant: {grant._id.slice(-6)} | Team: {grant.teamAddress.slice(0, 8)}...
-                          </p>
-                        )}
+                        <div className="flex items-center space-x-1.5 text-xs text-green-700 bg-green-50 px-2 py-0.5 rounded-md w-fit border border-green-100">
+                          <CheckCircle className="w-3 h-3" />
+                          <span>Recorded</span>
+                        </div>
                       </div>
-                      <span className="text-lg font-bold text-green-600">{milestone.amount} ALGO</span>
+                      <div className="text-sm font-semibold text-green-600">
+                        {milestone.amount} ALGO
+                      </div>
                     </div>
-                    
-                    {/* Team Submission */}
-                    {(milestone.submissionNote || milestone.submissionFileUrl) && (
-                      <div className="mb-2 p-3 bg-white rounded-lg">
-                        <p className="text-sm font-semibold text-blue-800 mb-2">Team Submission:</p>
-                        {milestone.submissionNote && (
-                          <div className="mb-2">
-                            <p className="text-xs text-gray-600 mb-1">Note:</p>
-                            <p className="text-sm text-gray-800">{milestone.submissionNote}</p>
-                          </div>
-                        )}
-                        {milestone.submissionFileUrl && (
-                          <div>
-                            <p className="text-xs text-gray-600 mb-1">Document:</p>
-                            <a 
-                              href={milestone.submissionFileUrl} 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              className="text-sm text-blue-600 hover:underline"
-                            >
-                              📄 View Submission PDF
-                            </a>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                    
-                    <div className="flex justify-between text-sm">
-                      <div>
-                        <span className="text-gray-600">Approvals: </span>
-                        <span className="font-medium text-gray-800">{milestone.approvals}</span>
-                        {grant && (
-                          <span className="text-gray-600"> / {grant.requiredVotes} required</span>
-                        )}
-                      </div>
-                      <span className={milestone.paid ? 'text-green-600 font-medium' : 'text-yellow-600'}>
-                        {milestone.paid ? '✓ Paid' : 'Awaiting more votes'}
-                      </span>
+                    <div className="space-y-2">
+                      <p className="text-xs text-gray-600 line-clamp-2">{milestone.description}</p>
+                      {grant && (
+                        <div className="flex items-center justify-between pt-2 border-t border-gray-100 mt-2">
+                          <span className="text-xs text-gray-500">Grant #{grant._id.slice(-6)}</span>
+                          <span className={`flex items-center gap-1 text-xs font-medium ${milestone.paid ? 'text-green-600' : 'text-yellow-600'}`}>
+                            {milestone.paid ? (
+                              <><CheckCircle className="w-3.5 h-3.5" />Paid</>
+                            ) : (
+                              <><Clock className="w-3.5 h-3.5" />Awaiting votes</>
+                            )}
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 );
               })}
             </div>
-          )}
-        </div>
-
-        {/* All Milestones */}
-        <div className="mt-8 bg-white rounded-lg shadow p-6">
-          <h3 className="text-xl font-bold text-gray-800 mb-4">All Milestones</h3>
-          {milestones.length === 0 ? (
-            <p className="text-gray-600">No milestones yet</p>
-          ) : (
-            <div className="space-y-4">
-              {milestones.map((milestone, index) => {
-                const grant = grants.find(g => g._id === milestone.grantId);
-                return (
-                  <div key={`${milestone._id}-all-${index}`} className="border rounded-lg p-4 bg-gray-50">
-                    <div className="flex justify-between items-start mb-2">
-                      <div>
-                        <h4 className="font-semibold text-gray-800">Milestone #{milestone.milestoneId}</h4>
-                        <p className="text-sm text-gray-600">{milestone.description}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-lg font-bold text-green-600">{milestone.amount} ALGO</p>
-                        <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
-                          milestone.paid 
-                            ? 'bg-green-100 text-green-800' 
-                            : 'bg-yellow-100 text-yellow-800'
-                        }`}>
-                          {milestone.paid ? 'Paid' : 'Pending'}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="text-sm text-gray-600">
-                      Approvals: {milestone.approvals}
-                      {grant && ` / ${grant.requiredVotes}`}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
+          </div>
+        )}
       </main>
     </div>
   );

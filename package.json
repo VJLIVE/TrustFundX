@@ -9,13 +9,15 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "next": "16.1.6",
-    "react": "19.2.3",
-    "react-dom": "19.2.3",
     "@perawallet/connect": "^1.5.1",
     "algosdk": "^3.5.2",
+    "framer-motion": "^12.34.4",
+    "lucide-react": "^0.576.0",
     "mongodb": "^6.3.0",
-    "qrcode.react": "^3.1.0"
+    "next": "16.1.6",
+    "qrcode.react": "^3.1.0",
+    "react": "19.2.3",
+    "react-dom": "19.2.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
