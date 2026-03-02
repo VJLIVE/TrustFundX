@@ -19,6 +19,7 @@ export interface Grant {
   appId: number;
   txId: string;
   status: 'active' | 'completed' | 'cancelled';
+  totalFunded?: number; // Total ALGO funded to the contract
   createdAt?: Date;
 }
 

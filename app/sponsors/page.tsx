@@ -15,6 +15,8 @@ export default function SponsorDashboard() {
   const [requiredVotes, setRequiredVotes] = useState(2);
   const [milestoneCount, setMilestoneCount] = useState(3);
   const [grants, setGrants] = useState<any[]>([]);
+  const [totalInvested, setTotalInvested] = useState(0);
+  const [totalPaid, setTotalPaid] = useState(0);
 
   useEffect(() => {
     const userData = localStorage.getItem('user');
@@ -105,7 +107,39 @@ export default function SponsorDashboard() {
     try {
       const response = await fetch(`/api/grants?sponsorAddress=${accountAddress}`);
       const data = await response.json();
-      setGrants(data.grants || []);
+      const fetchedGrants = data.grants || [];
+      setGrants(fetchedGrants);
+      
+      // Calculate total funded from grants
+      let totalFundedAmount = 0;
+      let totalPaidAmount = 0;
+      
+      for (const grant of fetchedGrants) {
+        // Add up all funding sent to this grant
+        totalFundedAmount += grant.totalFunded || 0;
+        
+        // Fetch milestones to calculate total paid
+        const milestonesResponse = await fetch(`/api/milestones?grantId=${grant._id}`);
+        const milestonesData = await milestonesResponse.json();
+        const milestones = milestonesData.milestones || [];
+        
+        console.log('Grant ID:', grant._id);
+        console.log('Total Funded for this grant:', grant.totalFunded);
+        console.log('Milestones:', milestones);
+        
+        milestones.forEach((milestone: any) => {
+          console.log('Milestone:', milestone.milestoneId, 'Amount:', milestone.amount, 'Paid:', milestone.paid);
+          if (milestone.paid) {
+            totalPaidAmount += milestone.amount;
+          }
+        });
+      }
+      
+      console.log('Total Funded:', totalFundedAmount);
+      console.log('Total Paid:', totalPaidAmount);
+      
+      setTotalInvested(totalFundedAmount);
+      setTotalPaid(totalPaidAmount);
     } catch (err) {
       console.error('Failed to fetch grants:', err);
     }
@@ -154,7 +188,7 @@ export default function SponsorDashboard() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <div className="bg-white rounded-lg shadow p-6">
             <h3 className="text-lg font-semibold text-gray-800 mb-2">Funded Projects</h3>
             <p className="text-3xl font-bold text-blue-600">{grants.length}</p>
@@ -163,8 +197,14 @@ export default function SponsorDashboard() {
 
           <div className="bg-white rounded-lg shadow p-6">
             <h3 className="text-lg font-semibold text-gray-800 mb-2">Total Invested</h3>
-            <p className="text-3xl font-bold text-green-600">0 ALGO</p>
+            <p className="text-3xl font-bold text-green-600">{totalInvested.toFixed(2)} ALGO</p>
             <p className="text-sm text-gray-600 mt-2">Total funding provided</p>
+          </div>
+
+          <div className="bg-white rounded-lg shadow p-6">
+            <h3 className="text-lg font-semibold text-gray-800 mb-2">Total Paid</h3>
+            <p className="text-3xl font-bold text-blue-600">{totalPaid.toFixed(2)} ALGO</p>
+            <p className="text-sm text-gray-600 mt-2">Released to teams</p>
           </div>
 
           <div className="bg-white rounded-lg shadow p-6">
@@ -253,6 +293,7 @@ export default function SponsorDashboard() {
                     <div className="flex justify-between items-start mb-2">
                       <div>
                         <h4 className="font-semibold text-gray-800">Grant #{grant._id.slice(-6)}</h4>
+                        <p className="text-xs text-gray-500 font-mono mb-1">ID: {grant._id}</p>
                         <p className="text-sm text-gray-600">Team: {grant.teamAddress.slice(0, 8)}...{grant.teamAddress.slice(-6)}</p>
                       </div>
                       <span className={`px-3 py-1 rounded-full text-xs font-medium ${

@@ -135,8 +135,19 @@ export default function GrantDetailPage() {
       const amountInMicroAlgos = parseFloat(fundAmount) * 1000000;
       const txid = await fundContract(peraWallet, accountAddress, amountInMicroAlgos);
 
+      // Update the grant's total funded amount in database
+      await fetch('/api/grants', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          grantId: params.id,
+          totalFunded: parseFloat(fundAmount),
+        }),
+      });
+
       alert(`Contract funded with ${fundAmount} ALGO! TX: ${txid}`);
       setFundAmount('');
+      fetchGrantDetails();
     } catch (err: any) {
       setError(err.message);
     } finally {
