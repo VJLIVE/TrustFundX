@@ -1,36 +1,114 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Grant Tracker - Transparent Fund Management System
+
+A blockchain-based grant and fund tracking system built on Algorand for transparent, milestone-based allocation and utilization of student project funds.
+
+## Features
+
+- **Role-Based Authentication**: Support for Students, Sponsors, and Voters
+- **Pera Wallet Integration**: Secure wallet connection for Algorand blockchain
+- **MongoDB Database**: Store user profiles and project data
+- **Milestone-Based Funding**: Smart contract-based fund disbursement
+- **Real-Time Dashboard**: Track grants, milestones, and transactions
+- **DAO-Style Voting**: Governance mechanism for milestone approvals
+
+## Tech Stack
+
+- **Frontend**: Next.js 16 with TypeScript
+- **Blockchain**: Algorand (via Pera Wallet & algosdk)
+- **Database**: MongoDB
+- **Styling**: Tailwind CSS
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
+- Node.js 18+ installed
+- MongoDB running locally or connection URI
+- Pera Wallet mobile app for testing
+
+### Installation
+
+1. Install dependencies:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Configure environment variables in `.env.local`:
+```
+MONGODB_URI=mongodb://localhost:27017/grant-tracking
+NEXT_PUBLIC_ALGOD_TOKEN=
+NEXT_PUBLIC_ALGOD_SERVER=https://testnet-api.algonode.cloud
+NEXT_PUBLIC_ALGOD_PORT=443
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Start MongoDB (if running locally):
+```bash
+mongod
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Run the development server:
+```bash
+npm run dev
+```
 
-## Learn More
+5. Open [http://localhost:3000](http://localhost:3000)
 
-To learn more about Next.js, take a look at the following resources:
+## User Roles
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Student
+- Submit project proposals
+- Track milestones and funding
+- Receive milestone-based payments
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Sponsor
+- Create and fund grants
+- Monitor project progress
+- Track fund utilization
 
-## Deploy on Vercel
+### Voter
+- Review milestone completions
+- Vote on fund releases
+- Participate in governance
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Authentication Flow
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Signup
+1. Enter name, email, and organization
+2. Select role (Student/Sponsor/Voter)
+3. Connect Pera Wallet via QR code
+4. Account created and redirected to dashboard
+
+### Login
+1. Scan QR code with Pera Wallet
+2. System checks wallet address and role
+3. Redirected to role-specific dashboard
+
+## Project Structure
+
+```
+├── app/
+│   ├── api/auth/          # Authentication endpoints
+│   ├── login/             # Login page
+│   ├── signup/            # Signup page
+│   ├── students/          # Student dashboard
+│   ├── sponsors/          # Sponsor dashboard
+│   └── voters/            # Voter dashboard
+├── contexts/
+│   └── WalletContext.tsx  # Pera Wallet integration
+├── lib/
+│   ├── mongodb.ts         # MongoDB connection
+│   └── types.ts           # TypeScript types
+└── .env.local             # Environment variables
+```
+
+## Next Steps
+
+- Implement smart contracts for milestone-based fund disbursement
+- Add project creation and management features
+- Build voting mechanism for milestone approvals
+- Create transaction dashboard with real-time updates
+- Add escrow functionality for conditional payments
+
+## License
+
+MIT
