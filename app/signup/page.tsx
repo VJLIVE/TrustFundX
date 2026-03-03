@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useWallet } from '@/contexts/WalletContext';
 import { UserRole } from '@/lib/types';
 
@@ -75,10 +76,10 @@ export default function SignupPage() {
         </div>
 
         {/* Top Logo Area */}
-        <div className="relative z-10 flex items-center gap-3">
+        <Link href="/" className="relative z-10 flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity w-fit">
           <img src="/unnamed.jpg" alt="TrustFundX Logo" className="w-8 h-8 rounded-full object-cover" />
           <span className="text-2xl font-bold tracking-tight">TrustFundX</span>
-        </div>
+        </Link>
 
         {/* Bottom Copy Area */}
         <div className="relative z-10 mt-auto">
