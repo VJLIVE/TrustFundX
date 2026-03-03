@@ -63,6 +63,10 @@ export default function StudentDashboard() {
     router.push('/login');
   };
 
+  const openMilestoneDetails = (milestoneDbId: string) => {
+    router.push(`/milestone/${milestoneDbId}`);
+  };
+
   const handleFileUpload = async (milestoneId: string, file: File) => {
     try {
       setUploadingFile(milestoneId);
@@ -252,7 +256,11 @@ export default function StudentDashboard() {
           ) : (
             <div className="space-y-4">
               {milestones.map((milestone) => (
-                <div key={milestone._id} className="border rounded-lg p-4">
+                <div
+                  key={milestone._id}
+                  className="border rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
+                  onClick={() => openMilestoneDetails(milestone._id)}
+                >
                   <div className="flex justify-between items-start mb-2">
                     <div>
                       <h4 className="font-semibold text-gray-800">Milestone #{milestone.milestoneId}</h4>
@@ -276,7 +284,10 @@ export default function StudentDashboard() {
                   
                   {/* Submission Section */}
                   {!milestone.paid && (
-                    <div className="mt-4 pt-4 border-t">
+                    <div
+                      className="mt-4 pt-4 border-t"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       <h5 className="font-semibold text-gray-800 mb-3">Submit Proof of Completion</h5>
                       
                       {milestone.submissionNote || milestone.submissionFileUrl ? (

@@ -180,6 +180,10 @@ export default function VoterDashboard() {
     router.push('/login');
   };
 
+  const openMilestoneDetails = (milestoneDbId: string) => {
+    router.push(`/milestone/${milestoneDbId}`);
+  };
+
   if (!user) return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="animate-pulse bg-gray-200 rounded-xl h-12 w-12"></div>
@@ -338,7 +342,11 @@ export default function VoterDashboard() {
                 {pendingMilestones.map((milestone) => {
                   const grant = grants.find(g => g._id === milestone.grantId);
                   return (
-                    <div key={milestone._id} className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-md transition-shadow">
+                    <div
+                      key={milestone._id}
+                      className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-md transition-shadow cursor-pointer"
+                      onClick={() => openMilestoneDetails(milestone._id)}
+                    >
                       <div className="flex items-start justify-between mb-5">
                         <div className="flex-1">
                           <div className="flex items-center space-x-2 mb-2">
@@ -397,6 +405,7 @@ export default function VoterDashboard() {
                                 href={milestone.submissionFileUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
+                                onClick={(e) => e.stopPropagation()}
                                 className="inline-flex items-center px-3 py-1.5 bg-white border border-gray-200 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
                               >
                                 <DocumentTextIcon className="w-4 h-4 mr-2 text-gray-400" />
@@ -418,7 +427,10 @@ export default function VoterDashboard() {
                         </div>
                         <div className="flex gap-2 w-full sm:w-auto">
                           <button
-                            onClick={() => handleSyncMilestone(milestone)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleSyncMilestone(milestone);
+                            }}
                             disabled={loading === milestone._id}
                             className="flex-1 sm:flex-none flex items-center justify-center space-x-2 px-4 py-2 bg-white border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                           >
@@ -426,7 +438,10 @@ export default function VoterDashboard() {
                             <span>Sync</span>
                           </button>
                           <button
-                            onClick={() => handleApprove(milestone)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleApprove(milestone);
+                            }}
                             disabled={loading === milestone._id}
                             className="flex-1 sm:flex-none flex items-center justify-center space-x-2 px-5 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
                           >
@@ -460,7 +475,11 @@ export default function VoterDashboard() {
               {milestones.filter(m => m.hasVoted).slice(0, 6).map((milestone) => {
                 const grant = grants.find(g => g._id === milestone.grantId);
                 return (
-                  <div key={milestone._id} className="bg-white border border-gray-200 rounded-xl p-5 hover:shadow-sm transition-shadow">
+                  <div
+                    key={milestone._id}
+                    className="bg-white border border-gray-200 rounded-xl p-5 hover:shadow-sm transition-shadow cursor-pointer"
+                    onClick={() => openMilestoneDetails(milestone._id)}
+                  >
                     <div className="flex items-start justify-between mb-3">
                       <div className="space-y-1">
                         <h4 className="font-medium text-sm text-gray-900">

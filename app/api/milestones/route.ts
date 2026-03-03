@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import clientPromise from '@/lib/mongodb';
+import { ObjectId } from 'mongodb';
 
 export async function POST(request: NextRequest) {
   try {
@@ -43,9 +44,22 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const grantId = searchParams.get('grantId');
+    const milestoneDbId = searchParams.get('milestoneDbId');
 
     const client = await clientPromise;
     const db = client.db();
+
+    if (milestoneDbId) {
+      const milestone = await db.collection('milestones').findOne({
+        _id: new ObjectId(milestoneDbId),
+      });
+
+      if (!milestone) {
+        return NextResponse.json({ error: 'Milestone not found' }, { status: 404 });
+      }
+
+      return NextResponse.json({ milestone });
+    }
     
     const query = grantId ? { grantId } : {};
     const milestones = await db.collection('milestones')
@@ -90,7 +104,6 @@ export async function PATCH(request: NextRequest) {
       if (!updateData.submittedAt) updateData.submittedAt = new Date();
     }
 
-    const { ObjectId } = require('mongodb');
     const result = await db.collection('milestones').updateOne(
       { _id: new ObjectId(milestoneDbId) },
       { $set: updateData }
