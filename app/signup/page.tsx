@@ -67,7 +67,7 @@ export default function SignupPage() {
 
   return (
     <div className="min-h-screen grid lg:grid-cols-2">
-      {/* Left Panel - Algorand Branding */}
+      {/* Left Panel - TrustFundX Branding */}
       <div className="hidden lg:flex flex-col bg-blue-600 text-white p-12 justify-between relative overflow-hidden">
         {/* Background Patterns */}
         <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
@@ -76,14 +76,14 @@ export default function SignupPage() {
 
         {/* Top Logo Area */}
         <div className="relative z-10 flex items-center gap-3">
-          <img src="/unnamed.jpg" alt="Algorand Logo" className="w-8 h-8 rounded-full object-cover" />
+          <img src="/unnamed.jpg" alt="TrustFundX Logo" className="w-8 h-8 rounded-full object-cover" />
           <span className="text-2xl font-bold tracking-tight">TrustFundX</span>
         </div>
 
         {/* Bottom Copy Area */}
         <div className="relative z-10 mt-auto">
           <h2 className="text-4xl font-semibold mb-4 leading-tight tracking-tight">Join the future of<br />education funding.</h2>
-          <p className="text-blue-100 text-lg max-w-md">Create your account to start sponsoring students or vote on proposals seamlessly on the Algorand blockchain.</p>
+          <p className="text-blue-100 text-lg max-w-md">Create your account to start sponsoring students or vote on proposals seamlessly on the TrustFundX blockchain.</p>
         </div>
       </div>
 
@@ -93,7 +93,7 @@ export default function SignupPage() {
 
           {/* Header */}
           <div className="text-center mb-8">
-            <p className="text-sm text-muted-foreground font-medium">Algorand × Pera</p>
+            <p className="text-sm text-muted-foreground font-medium">TrustFundX × Pera</p>
             <h1 className="text-2xl tracking-tight font-semibold mt-2">
               Create your account
             </h1>

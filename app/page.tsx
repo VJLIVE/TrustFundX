@@ -105,7 +105,7 @@ const AnimatedBackground = () => {
                   strokeWidth="1.2"
                   strokeLinejoin="round"
                 />
-                {/* Exact Algorand Logo */}
+                {/* Exact TrustFundX Logo */}
                 <g transform="translate(-12, -12)">
                   <path
                     d="M13.874 0h3.673l1.61 5.963h3.789l-2.588 4.5 3.624 13.533h-3.757l-2.44-9.077-5.247 9.079H8.345l8.107-14.051-1.304-4.878L4.215 24H.018Z"
@@ -152,10 +152,9 @@ const Navbar = () => (
           <div className="bg-black text-white w-7 h-7 flex items-center justify-center font-bold text-lg rounded-sm transform -rotate-6">
             X
           </div>
-          <span className="font-semibold text-2xl tracking-tight text-black ml-2 -mt-1">Algorand<sup className="text-sm">™</sup></span>
+          <span className="font-semibold text-2xl tracking-tight text-black ml-2 -mt-1">TrustFundX</span>
         </div>
         <div className="h-8 w-[1px] bg-gray-300 mx-2" />
-        <span className="text-gray-600 text-[21px]">TrustFundX</span>
       </div>
       <div className="hidden md:flex gap-8 text-[15px] font-medium text-gray-800">
         <a href="#" className="hover:text-black transition-colors">How It Works</a>
@@ -245,7 +244,7 @@ export default function TrustFundX() {
             transition={{ delay: 0.1 }}
             className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed"
           >
-            A blockchain-based system using Algorand to ensure transparent, milestone-based
+            A blockchain-based system using TrustFundX to ensure transparent, milestone-based
             allocation and utilization of student project funds.
           </motion.p>
         </section>
@@ -286,8 +285,8 @@ export default function TrustFundX() {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-[radial-gradient(circle_at_30%_50%,rgba(28,65,134,0.08)_0%,transparent_60%)] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
 
           <div className="flex-1 max-w-md relative z-10">
-            <span className="text-gray-500 text-[14px] font-normal mb-2 block group-hover:text-blue-600 transition-colors duration-300">Algorand Advantage</span>
-            <h2 className="text-[32px] md:text-[36px] leading-tight font-bold text-[#1A1C1E] mb-4 tracking-tight">Built on Algorand<br />Blockchain</h2>
+            <span className="text-gray-500 text-[14px] font-normal mb-2 block group-hover:text-blue-600 transition-colors duration-300">TrustFundX Advantage</span>
+            <h2 className="text-[32px] md:text-[36px] leading-tight font-bold text-[#1A1C1E] mb-4 tracking-tight">Built on TrustFundX<br />Blockchain</h2>
             <p className="text-[#334155] text-[15px] leading-relaxed mb-8 pr-4">
               Leveraging smart contracts for milestone-based fund disbursement,
               ensuring and transparency in grant management.
@@ -301,7 +300,7 @@ export default function TrustFundX() {
           <div className="flex-1 flex justify-end w-full md:w-auto h-[200px] md:h-[260px] relative z-10 transition-transform duration-500 group-hover:scale-105">
             <img
               src={architectureImage.src}
-              alt="Algorand Architecture Diagram"
+              alt="TrustFundX Architecture Diagram"
               className="w-full h-full object-contain mix-blend-multiply drop-shadow-sm"
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
@@ -312,7 +311,7 @@ export default function TrustFundX() {
         </motion.section>
 
         <footer className="mt-8 text-center text-gray-500 text-[13px]">
-          <p>© 2024 Algorand Foundation. All rights reserved. | Terms | Privacy</p>
+          <p>© 2024 TrustFundX. All rights reserved. | Terms | Privacy</p>
         </footer>
       </main>
     </div>
