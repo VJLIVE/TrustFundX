@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useWallet } from '@/contexts/WalletContext';
 
 export default function StudentDashboard() {
@@ -164,7 +165,16 @@ export default function StudentDashboard() {
       <nav className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <h1 className="text-xl font-bold text-gray-800">Student Dashboard</h1>
+            <div className="flex items-center gap-4">
+              <Link href="/" className="flex items-center gap-2">
+                <div className="bg-black text-white w-6 h-6 flex items-center justify-center font-bold text-sm rounded-sm transform -rotate-6">
+                  X
+                </div>
+                <span className="font-semibold text-lg tracking-tight text-black">TrustFundX</span>
+              </Link>
+              <div className="h-6 w-[1px] bg-gray-300 mx-2" />
+              <h1 className="text-xl font-bold text-gray-800">Student Dashboard</h1>
+            </div>
             <button
               onClick={handleLogout}
               className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"

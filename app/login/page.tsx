@@ -1,15 +1,44 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useWallet } from '@/contexts/WalletContext';
 
 export default function LoginPage() {
   const router = useRouter();
-  const { connectWallet } = useWallet();
+  const { connectWallet, accountAddress, isConnected } = useWallet();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [checkingWallet, setCheckingWallet] = useState(true);
+
+  // Auto-login if wallet is already connected
+  useEffect(() => {
+    const checkExistingWallet = async () => {
+      if (accountAddress && isConnected) {
+        try {
+          const res = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ walletAddress: accountAddress }),
+          });
+
+          const data = await res.json();
+
+          if (res.ok && data.user) {
+            localStorage.setItem('user', JSON.stringify(data.user));
+            router.push(`/${data.user.role}s`);
+            return;
+          }
+        } catch (err) {
+          console.error('Auto-login check failed:', err);
+        }
+      }
+      setCheckingWallet(false);
+    };
+
+    checkExistingWallet();
+  }, [accountAddress, isConnected, router]);
 
   const handleLogin = async () => {
     try {
@@ -41,6 +70,18 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
+
+  // Show loading while checking for existing wallet connection
+  if (checkingWallet) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center">
+          <div className="animate-spin h-12 w-12 border-4 border-primary/30 border-t-primary rounded-full mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Checking wallet connection...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen grid lg:grid-cols-2">

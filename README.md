@@ -350,6 +350,8 @@ Create a `.env.local` file in the project root with the following variables:
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
 | `MONGODB_URI` | ✅ Yes | - | MongoDB connection string |
+| `NEXT_PUBLIC_APP_ID` | ✅ Yes | - | Algorand smart contract application ID |
+| `NEXT_PUBLIC_APP_ADDRESS` | ✅ Yes | - | Algorand smart contract address |
 | `NEXT_PUBLIC_FILESTACK_API_KEY` | ⚠️ Optional | - | Filestack API key for file uploads |
 
 ### MongoDB URI Format
@@ -367,10 +369,17 @@ MONGODB_URI=mongodb://host.docker.internal:27017/grant-tracking
 
 ### Algorand Configuration
 
-Algorand settings are hardcoded in `lib/algorand.ts`:
-- **Network**: Testnet
-- **Node**: https://testnet-api.algonode.cloud
-- **App ID**: 756429531
+Set these environment variables for Algorand smart contract interaction:
+
+```env
+# Algorand Testnet App ID (number)
+NEXT_PUBLIC_APP_ID=YOUR_DEPLOYED_APP_ID
+
+# Algorand Testnet App Address (contract account address)
+NEXT_PUBLIC_APP_ADDRESS=YOUR_DEPLOYED_APP_ADDRESS
+```
+
+**Note**: These variables are public (prefixed with `NEXT_PUBLIC_`) because they need to be accessible in the browser. The values shown above are for the Algorand Testnet.
 
 ---
 
@@ -517,7 +526,7 @@ Fetch grants (filtered by query params)
     "teamAddress": "EFGH...",
     "requiredVotes": 3,
     "milestoneCount": 5,
-    "appId": 756429531,
+    "appId": 1234567,
     "txId": "XYZ...",
     "status": "active",
     "totalFunded": 1000,
@@ -536,7 +545,7 @@ Create a new grant
   "teamAddress": "EFGH...",
   "requiredVotes": 3,
   "milestoneCount": 5,
-  "appId": 756429531,
+  "appId": 1234567,
   "txId": "XYZ..."
 }
 ```
@@ -656,7 +665,7 @@ Recalculate grant funding amounts
 **Request Body**:
 ```json
 {
-  "appId": 756429531
+  "appId": 1234567
 }
 ```
 
@@ -668,8 +677,8 @@ Recalculate grant funding amounts
 
 **Contract Type**: Algorand Smart Contract (TEAL)  
 **Network**: Testnet  
-**App ID**: 756429531  
-**Contract Address**: `BHSXBUCE4GIO3EQQIVN5HOD6KVHIYU6NAZQYUVZFONYKJY5BPXWDKUD5KI`
+**App ID**: 1234567  
+**Contract Address**: `YOUR_DEPLOYED_APP_ADDRESS`
 
 ### Contract Methods
 

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useWallet } from '@/contexts/WalletContext';
 import { approveMilestone } from '@/lib/contractMethods';
 import { checkVoteExists, checkVoterRegistered, checkMilestoneExists } from '@/lib/diagnostics';
@@ -200,7 +201,14 @@ export default function VoterDashboard() {
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
-              <div className="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center shadow-sm">
+              <Link href="/" className="flex items-center gap-2 mr-4">
+                <div className="bg-black text-white w-6 h-6 flex items-center justify-center font-bold text-sm rounded-sm transform -rotate-6">
+                  X
+                </div>
+                <span className="font-semibold text-lg tracking-tight text-black">TrustFundX</span>
+              </Link>
+              <div className="h-6 w-[1px] bg-gray-300" />
+              <div className="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center shadow-sm ml-3">
                 <UserGroupIcon className="w-5 h-5 text-white" />
               </div>
               <div>

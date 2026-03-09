@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useWallet } from '@/contexts/WalletContext';
 import { createGrant } from '@/lib/contractMethods';
 import {
@@ -88,7 +89,7 @@ export default function SponsorDashboard() {
           teamAddress,
           requiredVotes,
           milestoneCount,
-          appId: 756429531,
+          appId: parseInt(process.env.NEXT_PUBLIC_APP_ID || '0'),
           txId: txid,
         }),
       });
@@ -169,7 +170,14 @@ export default function SponsorDashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-blue-400 rounded-lg flex items-center justify-center shadow-sm">
+              <Link href="/" className="flex items-center gap-2 mr-4">
+                <div className="bg-black text-white w-6 h-6 flex items-center justify-center font-bold text-sm rounded-sm transform -rotate-6">
+                  X
+                </div>
+                <span className="font-semibold text-lg tracking-tight text-black">TrustFundX</span>
+              </Link>
+              <div className="h-6 w-[1px] bg-gray-300" />
+              <div className="w-10 h-10 bg-blue-400 rounded-lg flex items-center justify-center shadow-sm ml-3">
                 <Wallet className="w-6 h-6 text-white" />
               </div>
               <div>

@@ -6,6 +6,13 @@ export const algod = new algosdk.Algodv2(
   ""
 );
 
-export const APP_ID = 756429531;
-export const APP_ADDRESS =
-  "BHSXBUCE4GIO3EQQIVN5HOD6KVHIYU6NAZQYUVZFONYKJY5BPXWDKUD5KI";
+if (!process.env.NEXT_PUBLIC_APP_ID) {
+  throw new Error('NEXT_PUBLIC_APP_ID environment variable is not set');
+}
+
+if (!process.env.NEXT_PUBLIC_APP_ADDRESS) {
+  throw new Error('NEXT_PUBLIC_APP_ADDRESS environment variable is not set');
+}
+
+export const APP_ID = parseInt(process.env.NEXT_PUBLIC_APP_ID, 10);
+export const APP_ADDRESS = process.env.NEXT_PUBLIC_APP_ADDRESS;

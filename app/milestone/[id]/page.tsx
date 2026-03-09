@@ -78,15 +78,25 @@ export default function MilestoneDetailPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="mb-6">
-          <button
-            onClick={() => router.back()}
-            className="text-sm text-gray-600 hover:text-gray-900"
-          >
-            ← Back
-          </button>
+      <nav className="bg-white shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <Link href="/" className="flex items-center gap-2">
+              <div className="bg-black text-white w-6 h-6 flex items-center justify-center font-bold text-sm rounded-sm transform -rotate-6">
+                X
+              </div>
+              <span className="font-semibold text-lg tracking-tight text-black">TrustFundX</span>
+            </Link>
+            <button
+              onClick={() => router.back()}
+              className="text-sm text-gray-600 hover:text-gray-900 flex items-center gap-1"
+            >
+              ← Back
+            </button>
+          </div>
         </div>
+      </nav>
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
         <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 md:p-8 space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">

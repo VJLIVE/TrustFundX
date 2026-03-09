@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function FixFundingPage() {
   const router = useRouter();
@@ -49,8 +50,21 @@ export default function FixFundingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      <nav className="bg-white shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center h-16">
+            <Link href="/" className="flex items-center gap-2">
+              <div className="bg-black text-white w-7 h-7 flex items-center justify-center font-bold text-lg rounded-sm transform -rotate-6">
+                X
+              </div>
+              <span className="font-semibold text-2xl tracking-tight text-black ml-2 -mt-1">TrustFundX</span>
+            </Link>
+          </div>
+        </div>
+      </nav>
+      <div className="flex-1 flex items-center justify-center p-4">
+        <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full">
         <h1 className="text-2xl font-bold text-gray-800 mb-6">Fix Grant Funding</h1>
         
         <div className="space-y-4">
@@ -122,6 +136,7 @@ export default function FixFundingPage() {
             <strong>Note:</strong> This is a one-time fix for existing grants that were funded before the tracking system was implemented. After running this, all future funding will be tracked automatically.
           </p>
         </div>
+      </div>
       </div>
     </div>
   );

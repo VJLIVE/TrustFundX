@@ -14,6 +14,7 @@ import {
 import { motion } from 'framer-motion';
 import { useMemo } from 'react';
 import architectureImage from '../assests/unnamed.jpg';
+import { useWallet } from '@/contexts/WalletContext';
 
 // --- Blockchain Network Data ---
 const nodes = [
@@ -143,41 +144,87 @@ const AnimatedBackground = () => {
   );
 };
 
-const Navbar = () => (
-  <nav className="flex items-center justify-between px-8 py-3 bg-transparent sticky top-0 z-50">
-    <div className="flex items-center gap-12">
-      <div className="flex items-center gap-3">
-        <div className="flex items-center">
-          {/* Logo Replacement: A simple stylish X representing TrustFundX */}
+const Navbar = () => {
+  const { accountAddress, isConnected } = useWallet();
+  const [userRole, setUserRole] = React.useState<string | null>(null);
+  const [loading, setLoading] = React.useState(false);
+
+  React.useEffect(() => {
+    const fetchUserRole = async () => {
+      if (accountAddress && isConnected) {
+        setLoading(true);
+        try {
+          const res = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ walletAddress: accountAddress }),
+          });
+
+          const data = await res.json();
+
+          if (res.ok && data.user) {
+            setUserRole(data.user.role);
+          } else {
+            setUserRole(null);
+          }
+        } catch (err) {
+          console.error('Failed to fetch user role:', err);
+          setUserRole(null);
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setUserRole(null);
+      }
+    };
+
+    fetchUserRole();
+  }, [accountAddress, isConnected]);
+
+  return (
+    <nav className="flex items-center justify-between px-8 py-3 bg-transparent sticky top-0 z-50">
+      <div className="flex items-center gap-12">
+        <Link href="/" className="flex items-center gap-3">
           <div className="bg-black text-white w-7 h-7 flex items-center justify-center font-bold text-lg rounded-sm transform -rotate-6">
             X
           </div>
           <span className="font-semibold text-2xl tracking-tight text-black ml-2 -mt-1">TrustFundX</span>
-        </div>
+        </Link>
         <div className="h-8 w-[1px] bg-gray-300 mx-2" />
+        <div className="hidden md:flex gap-8 text-[15px] font-medium text-gray-800">
+          <Link href="/how-it-works" className="hover:text-black transition-colors">How It Works</Link>
+          <Link href="/sponsors-info" className="hover:text-black transition-colors">Sponsors</Link>
+          <Link href="/governance" className="hover:text-black transition-colors">Governance</Link>
+          <Link href="/faqs" className="hover:text-black transition-colors">FAQs</Link>
+        </div>
       </div>
-      <div className="hidden md:flex gap-8 text-[15px] font-medium text-gray-800">
-        <a href="#" className="hover:text-black transition-colors">How It Works</a>
-        <a href="#" className="hover:text-black transition-colors">Sponsors</a>
-        <a href="#" className="hover:text-black transition-colors">Governance</a>
-        <a href="#" className="hover:text-black transition-colors">FAQs</a>
+      <div className="flex items-center gap-3">
+        {isConnected && userRole ? (
+          <Link href={`/${userRole}s`}>
+            <button className="flex items-center gap-2 bg-[#214A9D] text-white text-[15px] font-medium px-5 py-2 rounded-lg hover:bg-[#1A3B81] transition-all shadow-md">
+              <Activity size={18} strokeWidth={2} />
+              Dashboard
+            </button>
+          </Link>
+        ) : (
+          <>
+            <Link href="/login">
+              <button className="text-[15px] font-medium px-5 py-2 border border-gray-200 bg-white rounded-lg shadow-sm hover:bg-gray-50 transition-all text-gray-800">
+                Log In
+              </button>
+            </Link>
+            <Link href="/signup">
+              <button className="flex items-center gap-2 bg-[#214A9D] text-white text-[15px] font-medium px-5 py-2 rounded-lg hover:bg-[#1A3B81] transition-all shadow-md">
+                <Wallet size={18} strokeWidth={2} />
+                Sign Up
+              </button>
+            </Link>
+          </>
+        )}
       </div>
-    </div>
-    <div className="flex items-center gap-3">
-      <Link href="/login">
-        <button className="text-[15px] font-medium px-5 py-2 border border-gray-200 bg-white rounded-lg shadow-sm hover:bg-gray-50 transition-all text-gray-800">
-          Log In
-        </button>
-      </Link>
-      <Link href="/signup">
-        <button className="flex items-center gap-2 bg-[#214A9D] text-white text-[15px] font-medium px-5 py-2 rounded-lg hover:bg-[#1A3B81] transition-all shadow-md">
-          <Wallet size={18} strokeWidth={2} />
-          Sign Up
-        </button>
-      </Link>
-    </div>
-  </nav>
-);
+    </nav>
+  );
+};
 
 const FeatureCard = ({ title, desc, icon: Icon, color, iconColor }: { title: string, desc: string, icon: any, color: string, iconColor: string }) => {
   // Map our border/bg colors to specific hexes for the glow effect
@@ -244,7 +291,7 @@ export default function TrustFundX() {
             transition={{ delay: 0.1 }}
             className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed"
           >
-            A blockchain-based system using TrustFundX to ensure transparent, milestone-based
+            A blockchain-based system using Algorand Blockchain to ensure transparent, milestone-based
             allocation and utilization of student project funds.
           </motion.p>
         </section>

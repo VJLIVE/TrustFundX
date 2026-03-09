@@ -3,7 +3,7 @@ import algosdk from 'algosdk';
 import clientPromise from '@/lib/mongodb';
 
 const algod = new algosdk.Algodv2('', 'https://testnet-api.algonode.cloud', '');
-const APP_ID = 756429531;
+const APP_ID = parseInt(process.env.NEXT_PUBLIC_APP_ID || '0');
 
 export async function POST(request: NextRequest) {
   try {

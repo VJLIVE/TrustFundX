@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useWallet } from '@/contexts/WalletContext';
@@ -8,7 +8,7 @@ import { UserRole } from '@/lib/types';
 
 export default function SignupPage() {
   const router = useRouter();
-  const { connectWallet, accountAddress } = useWallet();
+  const { connectWallet, accountAddress, isConnected } = useWallet();
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     name: '',
@@ -18,6 +18,36 @@ export default function SignupPage() {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [checkingWallet, setCheckingWallet] = useState(true);
+
+  // Auto-redirect if wallet is already connected and user exists
+  useEffect(() => {
+    const checkExistingUser = async () => {
+      if (accountAddress && isConnected) {
+        try {
+          const res = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ walletAddress: accountAddress }),
+          });
+
+          const data = await res.json();
+
+          if (res.ok && data.user) {
+            // User already exists, redirect to their dashboard
+            localStorage.setItem('user', JSON.stringify(data.user));
+            router.push(`/${data.user.role}s`);
+            return;
+          }
+        } catch (err) {
+          console.error('Auto-login check failed:', err);
+        }
+      }
+      setCheckingWallet(false);
+    };
+
+    checkExistingUser();
+  }, [accountAddress, isConnected, router]);
 
   const handleNext = () => {
     if (!formData.name || !formData.email || !formData.organization) {
@@ -65,6 +95,18 @@ export default function SignupPage() {
       setError(err.message);
     }
   };
+
+  // Show loading while checking for existing wallet connection
+  if (checkingWallet) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center">
+          <div className="animate-spin h-12 w-12 border-4 border-primary/30 border-t-primary rounded-full mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Checking wallet connection...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen grid lg:grid-cols-2">
