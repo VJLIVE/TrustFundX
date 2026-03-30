@@ -204,99 +204,107 @@ export default function SponsorDashboard() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        {/* Profile Card */}
-        <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 lg:p-8">
-          <div className="flex items-start space-x-5 mb-6">
-            <div className="w-16 h-16 bg-blue-400 rounded-xl flex items-center justify-center shadow-sm">
-              <BuildingOfficeIcon className="w-8 h-8 text-white" />
-            </div>
-            <div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-1">Welcome back, {user.name}!</h2>
-              <p className="text-sm text-gray-500">Sponsor Account</p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 border-t border-gray-100">
-            <div>
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Email</p>
-              <p className="text-sm font-medium text-gray-900">{user.email}</p>
-            </div>
-            <div>
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Organization</p>
-              <p className="text-sm font-medium text-gray-900">{user.organization}</p>
-            </div>
-            <div>
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Wallet Address</p>
-              <div className="flex items-center space-x-2 mt-1.5">
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                <span className="text-sm font-mono text-gray-900">
-                  {user.walletAddress?.slice(0, 8)}...{user.walletAddress?.slice(-6)}
-                </span>
+        <div className="flex flex-col lg:flex-row gap-6 mb-8">
+          {/* Profile Section - Left Side */}
+          <div className="flex-1 bg-white border border-gray-200 rounded-2xl shadow-sm p-8">
+            <div className="flex items-start space-x-6 mb-8">
+              <div className="w-20 h-20 bg-blue-500 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-100 ring-4 ring-blue-50">
+                <BuildingOfficeIcon className="w-10 h-10 text-white" />
               </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-          <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
-            <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-500 mb-1">Funded Projects</p>
-                <p className="text-2xl font-semibold text-gray-900">
-                  {grants.length}
-                </p>
-              </div>
-              <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
-                <Plus className="w-6 h-6 text-blue-600" />
+                <h2 className="text-3xl font-bold text-gray-900 mb-1">Welcome back, {user.name}!</h2>
+                <p className="text-blue-600 font-semibold tracking-wide text-sm uppercase">Sponsor Dashboard</p>
               </div>
             </div>
-            <p className="text-xs text-slate-500 mt-3">Total projects sponsored</p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-gray-100">
+              <div className="space-y-1">
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Email Address</p>
+                <p className="text-gray-900 font-medium">{user.email}</p>
+              </div>
+              <div className="space-y-1">
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Organization</p>
+                <p className="text-gray-900 font-medium">{user.organization}</p>
+              </div>
+              <div className="md:col-span-2 space-y-2">
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Wallet Address</p>
+                <div className="bg-slate-50 border border-slate-100 rounded-xl p-3 flex items-center justify-between group">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-2.5 h-2.5 bg-blue-500 rounded-full animate-pulse"></div>
+                    <span className="text-sm font-mono text-slate-600 font-medium">
+                      {user.walletAddress}
+                    </span>
+                  </div>
+                  <button 
+                    onClick={() => {
+                      navigator.clipboard.writeText(user.walletAddress);
+                      alert('Address copied!');
+                    }}
+                    className="text-slate-400 hover:text-blue-600 transition-colors p-1"
+                    title="Copy Address"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-500 mb-1">Total Invested</p>
-                <p className="text-2xl font-semibold text-gray-900">
-                  {totalInvested.toFixed(2)} ALGO
-                </p>
+          {/* Stats Section - Right Side Stacked */}
+          <div className="w-full lg:w-80 flex flex-col gap-4">
+            <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-200 border-l-4 border-l-blue-500 min-h-[110px] flex flex-col justify-center">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-1">Funded Projects</p>
+                  <p className="text-3xl font-bold text-gray-900">{grants.length}</p>
+                </div>
+                <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
+                  <Plus className="w-6 h-6 text-blue-600" />
+                </div>
               </div>
-              <div className="w-12 h-12 bg-emerald-50 rounded-lg flex items-center justify-center">
-                <CurrencyDollarIcon className="w-6 h-6 text-emerald-600" />
-              </div>
+              <p className="text-[10px] text-slate-400 mt-2 font-medium">Total projects sponsored</p>
             </div>
-            <p className="text-xs text-slate-500 mt-3">Total funding committed</p>
-          </div>
 
-          <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-500 mb-1">Total Paid</p>
-                <p className="text-2xl font-semibold text-gray-900">
-                  {totalPaid.toFixed(2)} ALGO
-                </p>
+            <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-200 border-l-4 border-l-emerald-500 min-h-[110px] flex flex-col justify-center">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-1">Total Invested</p>
+                  <p className="text-3xl font-bold text-gray-900">{totalInvested.toFixed(2)}</p>
+                </div>
+                <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center">
+                  <CurrencyDollarIcon className="w-6 h-6 text-emerald-600" />
+                </div>
               </div>
-              <div className="w-12 h-12 bg-indigo-50 rounded-lg flex items-center justify-center">
-                <CheckCircleIcon className="w-6 h-6 text-indigo-600" />
-              </div>
+              <p className="text-[10px] text-slate-400 mt-2 font-medium">Recorded ALGO</p>
             </div>
-            <p className="text-xs text-slate-500 mt-3">Released to teams</p>
-          </div>
 
-          <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-500 mb-1">Active Grants</p>
-                <p className="text-2xl font-semibold text-gray-900">
-                  {grants.filter(g => g.status === 'active').length}
-                </p>
+            <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-200 border-l-4 border-l-indigo-500 min-h-[110px] flex flex-col justify-center">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-1">Total Paid</p>
+                  <p className="text-3xl font-bold text-gray-900">{totalPaid.toFixed(2)}</p>
+                </div>
+                <div className="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center">
+                  <CheckCircleIcon className="w-6 h-6 text-indigo-600" />
+                </div>
               </div>
-              <div className="w-12 h-12 bg-orange-50 rounded-lg flex items-center justify-center">
-                <ClockIcon className="w-6 h-6 text-orange-600" />
-              </div>
+              <p className="text-[10px] text-slate-400 mt-2 font-medium">Released to teams</p>
             </div>
-            <p className="text-xs text-slate-500 mt-3">Ongoing grants</p>
+            
+            <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-200 border-l-4 border-l-orange-400 min-h-[110px] flex flex-col justify-center">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-1">Active Grants</p>
+                  <p className="text-3xl font-bold text-gray-900">{grants.filter(g => g.status === 'active').length}</p>
+                </div>
+                <div className="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center">
+                  <ClockIcon className="w-6 h-6 text-orange-500" />
+                </div>
+              </div>
+              <p className="text-[10px] text-slate-400 mt-2 font-medium">Ongoing projects</p>
+            </div>
           </div>
         </div>
 

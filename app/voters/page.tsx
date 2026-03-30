@@ -78,14 +78,28 @@ export default function VoterDashboard() {
         const milestonesWithVoteStatus = await Promise.all(
           uniqueMilestones.map(async (milestone) => {
             const hasVoted = await checkVoteExists(accountAddress, milestone.milestoneId);
+            // Check if voter is registered on blockchain for this milestone's grant
+            const isRegisteredOnChain = await checkVoterRegistered(accountAddress);
             return {
               ...milestone,
-              hasVoted
+              hasVoted,
+              isRegisteredOnChain
             };
           })
         );
 
-        setMilestones(milestonesWithVoteStatus);
+        // Only show milestones where the voter is registered on the blockchain
+        const filteredMilestones = milestonesWithVoteStatus.filter(m => m.isRegisteredOnChain);
+        setMilestones(filteredMilestones);
+
+        // Check if there are milestones filtered out due to blockchain registration
+        const filteredOutCount = milestonesWithVoteStatus.length - filteredMilestones.length;
+        if (filteredOutCount > 0) {
+          console.warn(
+            `${filteredOutCount} milestone(s) hidden because you're not registered on the blockchain. ` +
+            `The sponsor needs to register your wallet address on the smart contract.`
+          );
+        }
       }
     } catch (err) {
       console.error('Failed to fetch voter data:', err);
@@ -239,84 +253,94 @@ export default function VoterDashboard() {
           </div>
         )}
 
-        {/* Profile Card */}
-        <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 lg:p-8">
-          <div className="flex items-start space-x-5 mb-6">
-            <div className="w-16 h-16 bg-green-600 rounded-xl flex items-center justify-center shadow-sm">
-              <UserGroupIcon className="w-8 h-8 text-white" />
-            </div>
-            <div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-1">Hello, {user.name}!</h2>
-              <p className="text-sm text-gray-500">Voter Account</p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 border-t border-gray-100">
-            <div>
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Email</p>
-              <p className="text-sm font-medium text-gray-900">{user.email}</p>
-            </div>
-            <div>
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Organization</p>
-              <p className="text-sm font-medium text-gray-900">{user.organization}</p>
-            </div>
-            <div>
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Wallet Address</p>
-              <div className="flex items-center space-x-2 mt-1.5">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span className="text-sm font-mono text-gray-900">
-                  {user.walletAddress?.slice(0, 8)}...{user.walletAddress?.slice(-6)}
-                </span>
+        <div className="flex flex-col lg:flex-row gap-6 mb-8">
+          {/* Profile Section - Left Side */}
+          <div className="flex-1 bg-white border border-gray-200 rounded-2xl shadow-sm p-8">
+            <div className="flex items-start space-x-6 mb-8">
+              <div className="w-20 h-20 bg-green-600 rounded-2xl flex items-center justify-center shadow-lg shadow-green-100 ring-4 ring-green-50">
+                <UserGroupIcon className="w-10 h-10 text-white" />
               </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
-            <div className="flex items-center justify-between mb-2">
               <div>
-                <p className="text-sm font-medium text-gray-500">Pending Actions</p>
-                <p className="text-2xl font-semibold text-gray-900 mt-1">
-                  {pendingMilestones.length}
-                </p>
-              </div>
-              <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
-                <Clock className="w-6 h-6 text-blue-600" />
+                <h2 className="text-3xl font-bold text-gray-900 mb-1">Hello, {user.name}!</h2>
+                <p className="text-green-600 font-semibold tracking-wide text-sm uppercase">Voter Dashboard</p>
               </div>
             </div>
-            <p className="text-xs text-gray-500 mt-1">Milestones awaiting your review</p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-gray-100">
+              <div className="space-y-1">
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Email Address</p>
+                <p className="text-gray-900 font-medium">{user.email}</p>
+              </div>
+              <div className="space-y-1">
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Organization</p>
+                <p className="text-gray-900 font-medium">{user.organization}</p>
+              </div>
+              <div className="md:col-span-2 space-y-2">
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Wallet Address</p>
+                <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-3 flex items-center justify-between group">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-2.5 h-2.5 bg-green-600 rounded-full animate-pulse"></div>
+                    <span className="text-sm font-mono text-emerald-900 font-medium truncate max-w-[200px] md:max-w-none">
+                      {user.walletAddress}
+                    </span>
+                  </div>
+                  <button 
+                    onClick={() => {
+                      navigator.clipboard.writeText(user.walletAddress || '');
+                      alert('Address copied!');
+                    }}
+                    className="text-emerald-400 hover:text-green-600 transition-colors p-1 flex-shrink-0"
+                    title="Copy Address"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
-            <div className="flex items-center justify-between mb-2">
-              <div>
-                <p className="text-sm font-medium text-gray-500">Votes Submitted</p>
-                <p className="text-2xl font-semibold text-gray-900 mt-1">
-                  {totalVotesCast}
-                </p>
+          {/* Stats Section - Right Side Stacked */}
+          <div className="w-full lg:w-80 flex flex-col gap-4">
+            <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-200 border-l-4 border-l-blue-500 min-h-[110px] flex flex-col justify-center">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-1">Pending Actions</p>
+                  <p className="text-3xl font-bold text-gray-900">{pendingMilestones.length}</p>
+                </div>
+                <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
+                  <Clock className="w-6 h-6 text-blue-600" />
+                </div>
               </div>
-              <div className="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center">
-                <CheckCircle className="w-6 h-6 text-green-600" />
-              </div>
+              <p className="text-[10px] text-slate-400 mt-2 font-medium">Awaiting review</p>
             </div>
-            <p className="text-xs text-gray-500 mt-1">Total approvals cast</p>
-          </div>
 
-          <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
-            <div className="flex items-center justify-between mb-2">
-              <div>
-                <p className="text-sm font-medium text-gray-500">Active Grants</p>
-                <p className="text-2xl font-semibold text-gray-900 mt-1">
-                  {grants.length}
-                </p>
+            <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-200 border-l-4 border-l-green-500 min-h-[110px] flex flex-col justify-center">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-1">Votes Submitted</p>
+                  <p className="text-3xl font-bold text-gray-900">{totalVotesCast}</p>
+                </div>
+                <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center">
+                  <CheckCircle className="w-6 h-6 text-green-600" />
+                </div>
               </div>
-              <div className="w-12 h-12 bg-purple-50 rounded-lg flex items-center justify-center">
-                <UserGroupIcon className="w-6 h-6 text-purple-600" />
-              </div>
+              <p className="text-[10px] text-slate-400 mt-2 font-medium">Total approvals cast</p>
             </div>
-            <p className="text-xs text-gray-500 mt-1">Projects you're reviewing</p>
+
+            <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-200 border-l-4 border-l-purple-500 min-h-[110px] flex flex-col justify-center">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-1">Active Grants</p>
+                  <p className="text-3xl font-bold text-gray-900">{grants.length}</p>
+                </div>
+                <div className="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center">
+                  <UserGroupIcon className="w-6 h-6 text-purple-600" />
+                </div>
+              </div>
+              <p className="text-[10px] text-slate-400 mt-2 font-medium">Projects you're reviewing</p>
+            </div>
           </div>
         </div>
 

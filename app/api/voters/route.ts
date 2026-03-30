@@ -40,11 +40,15 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const grantId = searchParams.get('grantId');
+    const voterAddress = searchParams.get('voterAddress');
 
     const client = await clientPromise;
     const db = client.db();
     
-    const query = grantId ? { grantId } : {};
+    const query: any = {};
+    if (grantId) query.grantId = grantId;
+    if (voterAddress) query.voterAddress = voterAddress;
+    
     const voters = await db.collection('voters')
       .find(query)
       .sort({ createdAt: -1 })

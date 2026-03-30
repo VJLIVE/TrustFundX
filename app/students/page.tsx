@@ -186,41 +186,63 @@ export default function StudentDashboard() {
       </nav>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-lg shadow p-6 mb-6">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Welcome, {user.name}!</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <p className="text-sm text-gray-600">Email</p>
-              <p className="font-medium text-gray-800">{user.email}</p>
+        <div className="flex flex-col lg:flex-row gap-6 mb-8">
+          {/* Profile Section - Left Side */}
+          <div className="flex-1 bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+            <div className="mb-6">
+              <h2 className="text-3xl font-bold text-gray-900 mb-1">Welcome, {user.name}!</h2>
+              <p className="text-blue-600 font-medium tracking-wide text-sm uppercase">Student Dashboard</p>
             </div>
-            <div>
-              <p className="text-sm text-gray-600">Organization</p>
-              <p className="font-medium text-gray-800">{user.organization}</p>
-            </div>
-            <div className="md:col-span-2">
-              <p className="text-sm text-gray-600">Wallet Address</p>
-              <p className="font-mono text-sm text-gray-800">{user.walletAddress}</p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-1">
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Email Address</p>
+                <p className="text-gray-800 font-medium">{user.email}</p>
+              </div>
+              <div className="space-y-1">
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Organization</p>
+                <p className="text-gray-800 font-medium">{user.organization}</p>
+              </div>
+              <div className="md:col-span-2 space-y-2">
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Wallet Address</p>
+                <div className="bg-gray-50 border border-gray-100 rounded-xl p-3 flex items-center justify-between">
+                  <p className="font-mono text-sm text-gray-600 break-all">{user.walletAddress}</p>
+                  <button 
+                    onClick={() => {
+                      navigator.clipboard.writeText(user.walletAddress);
+                      alert('Address copied!');
+                    }}
+                    className="ml-4 text-blue-600 hover:text-blue-700 p-1"
+                    title="Copy Address"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold text-gray-800 mb-2">My Projects</h3>
-            <p className="text-3xl font-bold text-blue-600">{grants.length}</p>
-            <p className="text-sm text-gray-600 mt-2">Active projects</p>
-          </div>
+          {/* Stats Section - Right Side Stacked */}
+          <div className="w-full lg:w-80 flex flex-col gap-4">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col justify-center min-h-[110px]">
+              <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-1">My Projects</h3>
+              <p className="text-3xl font-bold text-gray-900">{grants.length}</p>
+              <p className="text-xs font-medium text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full w-fit mt-2">Active projects</p>
+            </div>
 
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold text-gray-800 mb-2">Total Funding</h3>
-            <p className="text-3xl font-bold text-green-600">{totalReceived.toFixed(2)} ALGO</p>
-            <p className="text-sm text-gray-600 mt-2">Received funding</p>
-          </div>
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col justify-center min-h-[110px]">
+              <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-1">Total Funding</h3>
+              <p className="text-3xl font-bold text-gray-900">{totalReceived.toFixed(2)} ALGO</p>
+              <p className="text-xs font-medium text-green-600 bg-green-50 px-2.5 py-1 rounded-full w-fit mt-2">Received funding</p>
+            </div>
 
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold text-gray-800 mb-2">Milestones</h3>
-            <p className="text-3xl font-bold text-purple-600">{completedMilestones}/{milestones.length}</p>
-            <p className="text-sm text-gray-600 mt-2">Completed milestones</p>
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col justify-center min-h-[110px]">
+              <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-1">Milestones</h3>
+              <p className="text-3xl font-bold text-gray-900">{completedMilestones}/{milestones.length}</p>
+              <p className="text-xs font-medium text-purple-600 bg-purple-50 px-2.5 py-1 rounded-full w-fit mt-2">Completed milestones</p>
+            </div>
           </div>
         </div>
 
