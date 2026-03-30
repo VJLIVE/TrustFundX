@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useWallet } from '@/contexts/WalletContext';
 import { createGrant } from '@/lib/contractMethods';
+import toast from 'react-hot-toast';
 import {
   ChevronDown,
   Plus,
@@ -98,7 +99,9 @@ export default function SponsorDashboard() {
         throw new Error('Failed to store grant in database');
       }
 
-      alert(`Grant created successfully! Transaction ID: ${txid}`);
+      toast.success(`Grant created successfully! TX: ${txid.slice(0, 8)}...`, {
+        duration: 5000,
+      });
       setTeamAddress('');
       setShowCreateForm(false);
       fetchGrants();
@@ -238,7 +241,7 @@ export default function SponsorDashboard() {
                   <button 
                     onClick={() => {
                       navigator.clipboard.writeText(user.walletAddress);
-                      alert('Address copied!');
+                      toast.success('Address copied to clipboard!');
                     }}
                     className="text-slate-400 hover:text-blue-600 transition-colors p-1"
                     title="Copy Address"

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import toast from 'react-hot-toast';
 import { 
   ArrowLeft, 
   Wallet, 
@@ -89,7 +90,9 @@ export default function GrantDetailPage() {
         }),
       });
 
-      alert(`Voter added! TX: ${txid}`);
+      toast.success(`Voter added! TX: ${txid.slice(0, 8)}...`, {
+        duration: 5000,
+      });
       setVoterAddress('');
       setVoterName('');
       fetchGrantDetails();
@@ -130,7 +133,9 @@ export default function GrantDetailPage() {
         }),
       });
 
-      alert(`Milestone created! TX: ${txid}`);
+      toast.success(`Milestone created! TX: ${txid.slice(0, 8)}...`, {
+        duration: 5000,
+      });
       setMilestoneAmount('');
       setMilestoneDesc('');
       fetchGrantDetails();
@@ -161,7 +166,9 @@ export default function GrantDetailPage() {
         }),
       });
 
-      alert(`Contract funded with ${fundAmount} ALGO! TX: ${txid}`);
+      toast.success(`Contract funded with ${fundAmount} ALGO! TX: ${txid.slice(0, 8)}...`, {
+        duration: 5000,
+      });
       setFundAmount('');
       fetchGrantDetails();
     } catch (err: any) {

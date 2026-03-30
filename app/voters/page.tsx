@@ -7,6 +7,7 @@ import { useWallet } from '@/contexts/WalletContext';
 import { approveMilestone } from '@/lib/contractMethods';
 import { checkVoteExists, checkVoterRegistered, checkMilestoneExists } from '@/lib/diagnostics';
 import { syncMilestoneFromBlockchain } from '@/lib/syncBlockchain';
+import toast from 'react-hot-toast';
 import {
   CheckCircle,
   Clock,
@@ -155,7 +156,9 @@ export default function VoterDashboard() {
         console.warn('Failed to sync milestone data from blockchain');
       }
 
-      alert(`Milestone approved! TX: ${txid}`);
+      toast.success(`Milestone approved! TX: ${txid.slice(0, 8)}...`, {
+        duration: 5000,
+      });
       await fetchVoterData();
     } catch (err: any) {
       console.error('Approval error:', err);
@@ -176,7 +179,7 @@ export default function VoterDashboard() {
       );
 
       if (synced) {
-        alert('Milestone synced successfully!');
+        toast.success('Milestone synced successfully!');
         await fetchVoterData();
       } else {
         throw new Error('Failed to sync milestone');
@@ -287,7 +290,7 @@ export default function VoterDashboard() {
                   <button 
                     onClick={() => {
                       navigator.clipboard.writeText(user.walletAddress || '');
-                      alert('Address copied!');
+                      toast.success('Address copied to clipboard!');
                     }}
                     className="text-emerald-400 hover:text-green-600 transition-colors p-1 flex-shrink-0"
                     title="Copy Address"

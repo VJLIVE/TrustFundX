@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useWallet } from '@/contexts/WalletContext';
+import toast from 'react-hot-toast';
 
 export default function StudentDashboard() {
   const router = useRouter();
@@ -97,9 +98,11 @@ export default function StudentDashboard() {
       console.error('File upload error:', error);
       
       if (error.message.includes('Filestack API key not configured')) {
-        alert('File upload is not configured.\n\nTo enable file uploads:\n1. Sign up at https://www.filestack.com/\n2. Get your API key\n3. Add it to .env.local as NEXT_PUBLIC_FILESTACK_API_KEY\n4. Restart the server');
+        toast.error('File upload is not configured. Please contact the administrator.', {
+          duration: 6000,
+        });
       } else {
-        alert(`Failed to upload file: ${error.message}`);
+        toast.error(`Failed to upload file: ${error.message}`);
       }
       
       return null;
@@ -117,7 +120,7 @@ export default function StudentDashboard() {
       const file = fileInput?.files?.[0];
       
       if (!note && !file) {
-        alert('Please provide either a note or upload a file');
+        toast.error('Please provide either a note or upload a file');
         return;
       }
       
@@ -142,13 +145,13 @@ export default function StudentDashboard() {
         throw new Error('Failed to submit milestone');
       }
       
-      alert('Milestone submitted successfully!');
+      toast.success('Milestone submitted successfully!');
       setSubmissionNote({ ...submissionNote, [milestone._id]: '' });
       if (fileInput) fileInput.value = '';
       fetchGrants();
     } catch (error) {
       console.error('Submit milestone error:', error);
-      alert('Failed to submit milestone');
+      toast.error('Failed to submit milestone');
     } finally {
       setSubmittingMilestone(null);
     }
@@ -210,7 +213,7 @@ export default function StudentDashboard() {
                   <button 
                     onClick={() => {
                       navigator.clipboard.writeText(user.walletAddress);
-                      alert('Address copied!');
+                      toast.success('Address copied to clipboard!');
                     }}
                     className="ml-4 text-blue-600 hover:text-blue-700 p-1"
                     title="Copy Address"
