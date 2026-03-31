@@ -161,9 +161,9 @@ export default function SponsorsPage() {
           <p className="text-xl text-text-secondary max-w-2xl mx-auto font-medium leading-relaxed">
             Deploy institutional capital through sovereign smart contracts. Ensure every ALGO is allocated to verifiable, milestone-driven technical progress.
           </p>
-          <div className="mt-12">
+          <div className="mt-12 flex justify-center">
              <Link href="/signup">
-                <button className="bg-primary text-white text-xs font-black px-10 py-5 rounded-2xl hover:bg-primary/90 transition-all shadow-xl shadow-primary/20 hover:-translate-y-1 active:translate-y-0 flex items-center justify-center gap-2 uppercase tracking-widest">
+                <button className="bg-primary text-white text-xs font-black px-10 py-5 rounded-2xl hover:bg-primary/90 transition-all shadow-xl shadow-primary/20 hover:-translate-y-1 active:translate-y-0 inline-flex items-center justify-center gap-2 uppercase tracking-widest">
                   Become a Sponsor <ArrowRight size={18} strokeWidth={3} />
                 </button>
              </Link>

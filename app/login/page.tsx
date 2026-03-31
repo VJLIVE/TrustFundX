@@ -148,7 +148,7 @@ export default function LoginPage() {
 
               <Link href="/signup">
                 <button className="w-full bg-white border border-border text-text-primary font-bold py-4 rounded-xl shadow-sm hover:bg-background transition-all flex items-center justify-center gap-2 group">
-                  Register Node <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                  Register <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
                 </button>
               </Link>
             </div>
