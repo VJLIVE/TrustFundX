@@ -1,20 +1,28 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useWallet } from '@/contexts/WalletContext';
 import { createGrant } from '@/lib/contractMethods';
 import toast from 'react-hot-toast';
+import { motion } from 'framer-motion';
 import {
-  ChevronDown,
+  ChevronRight,
   Plus,
   Wallet,
-  Building2 as BuildingOfficeIcon,
-  User as UserIcon,
-  CircleDollarSign as CurrencyDollarIcon,
-  CheckCircle as CheckCircleIcon,
-  Clock as ClockIcon
+  Building2,
+  User,
+  CircleDollarSign,
+  CheckCircle,
+  Clock,
+  Activity,
+  Target,
+  TrendingUp,
+  AlertCircle,
+  Loader2,
+  Copy,
+  ExternalLink
 } from 'lucide-react';
 
 export default function SponsorDashboard() {
@@ -113,7 +121,7 @@ export default function SponsorDashboard() {
     }
   };
 
-  const fetchGrants = async () => {
+  const fetchGrants = useCallback(async () => {
     if (!accountAddress) return;
 
     try {
@@ -152,67 +160,61 @@ export default function SponsorDashboard() {
     } catch (err) {
       console.error('Failed to fetch grants:', err);
     }
-  };
+  }, [accountAddress]);
 
   useEffect(() => {
     if (user && accountAddress) {
       fetchGrants();
     }
-  }, [user, accountAddress]);
+  }, [user, accountAddress, fetchGrants]);
 
   if (!user) return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+    <div className="min-h-screen flex items-center justify-center bg-background">
+      <motion.div
+        animate={{ rotate: 360 }}
+        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+        className="w-10 h-10 border-4 border-black/10 border-t-black rounded-full"
+      />
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Enhanced Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-3">
-              <Link href="/" className="flex items-center gap-2 mr-4">
-                <div className="bg-black text-white w-6 h-6 flex items-center justify-center font-bold text-sm rounded-sm transform -rotate-6">
-                  X
-                </div>
-                <span className="font-semibold text-lg tracking-tight text-black">TrustFundX</span>
-              </Link>
-              <div className="h-6 w-[1px] bg-gray-300" />
-              <div className="w-10 h-10 bg-blue-400 rounded-lg flex items-center justify-center shadow-sm ml-3">
-                <Wallet className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-lg font-semibold text-gray-900">
-                  Sponsor Dashboard
-                </h1>
-                <p className="text-xs text-slate-500 font-medium">Manage your grants & investments</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="flex items-center space-x-1 text-sm text-slate-600 bg-slate-100 px-3 py-1 rounded-full">
-                <UserIcon className="w-4 h-4" />
-                <span>{user.name.split(' ')[0]}</span>
-              </div>
-              <button
-                onClick={handleLogout}
-                className="px-4 py-2 bg-white border border-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-50 shadow-sm transition-all duration-200 flex items-center space-x-2 text-sm"
-              >
-                <span>Logout</span>
-              </button>
+    <div className="min-h-screen bg-background selection:bg-primary/10">
+      {/* Premium Header */}
+      <nav className="fixed top-0 left-0 right-0 z-[100] bg-white/70 backdrop-blur-xl border-b border-border px-8 py-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-10">
+            <Link href="/" className="flex items-center gap-3">
+              <div className="bg-black text-white w-8 h-8 flex items-center justify-center font-bold text-lg rounded-xl shadow-lg transition-transform hover:rotate-6">X</div>
+              <span className="font-bold text-xl tracking-tighter">TrustFundX</span>
+            </Link>
+            <div className="hidden md:flex items-center gap-3 px-4 py-2 bg-primary/5 rounded-full border border-primary/10">
+              <Activity size={16} className="text-primary" strokeWidth={2.5} />
+              <span className="text-[11px] font-black uppercase tracking-widest text-primary">Sponsor Console</span>
             </div>
           </div>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-text-secondary bg-background px-4 py-2 rounded-full border border-border">
+              <User size={14} />
+              <span>{user.name.split(' ')[0]}</span>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 bg-text-primary text-white text-xs font-black px-6 py-2.5 rounded-full hover:bg-black transition-all shadow-lg hover:-translate-y-0.5 uppercase tracking-widest"
+            >
+              Disconnect
+            </button>
+          </div>
         </div>
-      </header>
+      </nav>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-8 space-y-8">
         <div className="flex flex-col lg:flex-row gap-6 mb-8">
           {/* Profile Section - Left Side */}
           <div className="flex-1 bg-white border border-gray-200 rounded-2xl shadow-sm p-8">
             <div className="flex items-start space-x-6 mb-8">
               <div className="w-20 h-20 bg-blue-500 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-100 ring-4 ring-blue-50">
-                <BuildingOfficeIcon className="w-10 h-10 text-white" />
+                <Building2 className="w-10 h-10 text-white" />
               </div>
               <div>
                 <h2 className="text-3xl font-bold text-gray-900 mb-1">Welcome back, {user.name}!</h2>
@@ -277,7 +279,7 @@ export default function SponsorDashboard() {
                   <p className="text-3xl font-bold text-gray-900">{totalInvested.toFixed(2)}</p>
                 </div>
                 <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center">
-                  <CurrencyDollarIcon className="w-6 h-6 text-emerald-600" />
+                  <CircleDollarSign className="w-6 h-6 text-emerald-600" />
                 </div>
               </div>
               <p className="text-[10px] text-slate-400 mt-2 font-medium">Recorded ALGO</p>
@@ -290,7 +292,7 @@ export default function SponsorDashboard() {
                   <p className="text-3xl font-bold text-gray-900">{totalPaid.toFixed(2)}</p>
                 </div>
                 <div className="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center">
-                  <CheckCircleIcon className="w-6 h-6 text-indigo-600" />
+                  <CheckCircle className="w-6 h-6 text-indigo-600" />
                 </div>
               </div>
               <p className="text-[10px] text-slate-400 mt-2 font-medium">Released to teams</p>
@@ -303,7 +305,7 @@ export default function SponsorDashboard() {
                   <p className="text-3xl font-bold text-gray-900">{grants.filter(g => g.status === 'active').length}</p>
                 </div>
                 <div className="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center">
-                  <ClockIcon className="w-6 h-6 text-orange-500" />
+                  <Clock className="w-6 h-6 text-orange-500" />
                 </div>
               </div>
               <p className="text-[10px] text-slate-400 mt-2 font-medium">Ongoing projects</p>
@@ -485,7 +487,7 @@ export default function SponsorDashboard() {
                       </div>
                       <div className="flex items-center space-x-2 text-blue-600 font-semibold text-sm group-hover:text-blue-700 transition-colors">
                         <span>Manage Grant</span>
-                        <ChevronDown className="w-4 h-4 group-hover:rotate-180 transition-transform duration-200" />
+                        <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform duration-200" />
                       </div>
                     </div>
                   </div>

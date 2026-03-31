@@ -19,22 +19,129 @@ import {
 } from 'lucide-react';
 import { useWallet } from '@/contexts/WalletContext';
 
-// --- Visual Background: Premium Grid ---
-const PremiumBackground = () => (
-  <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-    <div className="absolute inset-0 bg-[linear-gradient(to_right,#E2E8F0_1px,transparent_1px),linear-gradient(to_bottom,#E2E8F0_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-[0.25]" />
-    <motion.div
-      animate={{ opacity: [0.3, 0.5, 0.3] }}
-      transition={{ duration: 10, repeat: Infinity }}
-      className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/10 blur-[120px] rounded-full"
-    />
-    <motion.div
-      animate={{ opacity: [0.2, 0.4, 0.2] }}
-      transition={{ duration: 12, repeat: Infinity, delay: 2 }}
-      className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-secondary/10 blur-[130px] rounded-full"
-    />
-  </div>
-);
+// --- Blockchain Network Data ---
+const networkNodes = [
+  // Left side
+  [5, 10], [20, 15], [35, 20], [10, 35], [25, 45],
+  [5, 60], [20, 75], [35, 85], [15, 95],
+  // Right side
+  [65, 10], [80, 20], [95, 15], [75, 35], [90, 45],
+  [65, 60], [80, 75], [95, 85], [70, 95]
+];
+
+const networkLines = [
+  // Left side connections
+  [5, 10, 20, 15], [20, 15, 35, 20], [5, 10, 10, 35],
+  [20, 15, 25, 45], [35, 20, 25, 45], [10, 35, 25, 45],
+  [10, 35, 5, 60], [25, 45, 20, 75], [5, 60, 20, 75],
+  [20, 75, 35, 85], [5, 60, 15, 95], [20, 75, 15, 95],
+  // Right side connections
+  [65, 10, 80, 20], [80, 20, 95, 15], [65, 10, 75, 35],
+  [80, 20, 90, 45], [80, 20, 75, 35], [75, 35, 90, 45],
+  [75, 35, 65, 60], [90, 45, 80, 75], [65, 60, 80, 75],
+  [80, 75, 95, 85], [65, 60, 70, 95], [80, 75, 70, 95],
+  [90, 45, 95, 85]
+];
+
+// --- Packet Animation Hook ---
+const usePackets = () =>
+  useMemo(() =>
+    networkLines.map(([x1, y1, x2, y2]) => ({
+      x1,
+      y1,
+      x2,
+      y2,
+      speed: 2 + Math.random() * 2,
+      delay: Math.random() * 4,
+    }))
+  , []);
+
+// --- Visual Background: Mesh Network with TrustFundX Logos ---
+const PremiumBackground = () => {
+  const packets = usePackets();
+
+  return (
+    <div className="absolute inset-0 z-0 opacity-40 pointer-events-none overflow-hidden flex justify-center items-center">
+      <svg
+        className="w-[120%] h-[120%] max-w-[1600px] min-w-[1200px]"
+        viewBox="0 0 100 100"
+        preserveAspectRatio="xMidYMid slice"
+      >
+        {/* Lines */}
+        <g stroke="#CBD5E1" strokeWidth="0.1">
+          {networkLines.map(([x1, y1, x2, y2], idx) => (
+            <motion.line
+              key={`line-${idx}`}
+              x1={x1} y1={y1} x2={x2} y2={y2}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1, delay: idx * 0.02 }}
+            />
+          ))}
+        </g>
+
+        {/* Nodes with TrustFundX Logo */}
+        <g>
+          {networkNodes.map(([cx, cy], idx) => (
+            <motion.g
+              key={`node-${idx}`}
+              animate={{
+                scale: [1, 1.05, 1],
+                opacity: [0.8, 1, 0.8],
+              }}
+              transition={{
+                duration: 4 + Math.random() * 2,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: Math.random() * 2,
+              }}
+            >
+              <g transform={`translate(${cx}, ${cy}) scale(0.1)`}>
+                {/* Hexagon Border */}
+                <polygon
+                  points="0,-18 15.58,-9 15.58,9 0,18 -15.58,9 -15.58,-9"
+                  fill="none"
+                  stroke="#9CA3AF"
+                  strokeWidth="1.2"
+                  strokeLinejoin="round"
+                />
+                {/* TrustFundX Logo */}
+                <g transform="translate(-12, -12)">
+                  <path
+                    d="M13.874 0h3.673l1.61 5.963h3.789l-2.588 4.5 3.624 13.533h-3.757l-2.44-9.077-5.247 9.079H8.345l8.107-14.051-1.304-4.878L4.215 24H.018Z"
+                    fill="#9CA3AF"
+                  />
+                </g>
+              </g>
+            </motion.g>
+          ))}
+        </g>
+
+        {/* Animated Packets */}
+        <g>
+          {packets.map((packet, idx) => (
+            <motion.circle
+              key={`packet-${idx}`}
+              r="0.3"
+              fill="#1C4186"
+              animate={{
+                cx: [packet.x1, packet.x2],
+                cy: [packet.y1, packet.y2],
+                opacity: [1, 1, 0],
+              }}
+              transition={{
+                duration: packet.speed,
+                delay: packet.delay,
+                repeat: Infinity,
+                ease: "linear",
+              }}
+            />
+          ))}
+        </g>
+      </svg>
+    </div>
+  );
+};
 
 const Navbar = () => {
   const { accountAddress, isConnected } = useWallet();
@@ -132,67 +239,71 @@ const FeatureCard = ({ icon: Icon, title, desc, delay, color }: any) => (
 export default function LandingPage() {
   return (
     <div className="relative min-h-screen bg-background selection:bg-primary/10">
-      <PremiumBackground />
       <Navbar />
 
       <main className="relative z-10">
-        {/* --- Hero Section --- */}
-        <section className="pt-44 pb-20 px-6 max-w-7xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-black/5 border border-black/10 rounded-full text-black font-bold text-xs uppercase tracking-widest mb-8"
-          >
-            <span className="w-2 h-2 bg-black rounded-full animate-pulse" />
-            Empowering Next-Gen Students on Algorand
-          </motion.div>
+        {/* --- Hero Section with Network Background --- */}
+        <section className="relative pt-44 pb-20 px-6 max-w-7xl mx-auto text-center overflow-hidden">
+          {/* Network Background - Only for Hero Section */}
+          <PremiumBackground />
+          
+          <div className="relative z-10">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-black/5 border border-black/10 rounded-full text-black font-bold text-xs uppercase tracking-widest mb-8"
+            >
+              <span className="w-2 h-2 bg-black rounded-full animate-pulse" />
+              Empowering Next-Gen Students on Algorand
+            </motion.div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-6xl md:text-8xl font-black text-text-primary tracking-tight leading-[0.95] mb-8 text-balance"
-          >
-            Programmable <br /> Trust for Grants
-          </motion.h1>
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="text-6xl md:text-8xl font-black text-text-primary tracking-tight leading-[0.95] mb-8 text-balance"
+            >
+              Programmable <br /> Trust for Grants
+            </motion.h1>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-xl text-text-secondary max-w-2xl mx-auto leading-relaxed mb-12 text-balance"
-          >
-            The world's most transparent grant management protocol. Automate funding releases through on-chain milestones and community governance.
-          </motion.p>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="text-xl text-text-secondary max-w-2xl mx-auto leading-relaxed mb-12 text-balance"
+            >
+              The world's most transparent grant management protocol. Automate funding releases through on-chain milestones and community governance.
+            </motion.p>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4"
-          >
-            <button className="w-full sm:w-auto bg-primary text-white font-bold text-lg px-10 py-4 rounded-full shadow-2xl shadow-primary/30 hover:bg-primary/90 hover:-translate-y-1 transition-all">
-              Initialize Protocol
-            </button>
-            <button className="w-full sm:w-auto bg-white border border-border text-text-primary font-bold text-lg px-10 py-4 rounded-full shadow-premium hover:bg-background transition-all">
-              View Governance
-            </button>
-          </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="flex flex-col sm:flex-row items-center justify-center gap-4"
+            >
+              <button className="w-full sm:w-auto bg-primary text-white font-bold text-lg px-10 py-4 rounded-full shadow-2xl shadow-primary/30 hover:bg-primary/90 hover:-translate-y-1 transition-all">
+                Initialize Protocol
+              </button>
+              <button className="w-full sm:w-auto bg-white border border-border text-text-primary font-bold text-lg px-10 py-4 rounded-full shadow-premium hover:bg-background transition-all">
+                View Governance
+              </button>
+            </motion.div>
 
-          {/* Social Proof */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6 }}
-            className="mt-20 pt-10 border-t border-border flex flex-col items-center gap-8"
-          >
-            <span className="text-xs font-bold text-text-secondary uppercase tracking-[0.2em]">POWERING DECENTRALIZED INNOVATION</span>
-            <div className="flex flex-wrap justify-center items-center gap-12 opacity-40 grayscale hover:grayscale-0 transition-all duration-500">
-              <div className="flex items-center gap-2 text-2xl font-bold">ALGORAND</div>
-              <div className="flex items-center gap-2 text-2xl font-bold">PERA WALLET</div>
-              <div className="flex items-center gap-2 text-2xl font-bold">DAO NODE</div>
-            </div>
-          </motion.div>
+            {/* Social Proof */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6 }}
+              className="mt-20 pt-10 border-t border-border flex flex-col items-center gap-8"
+            >
+              <span className="text-xs font-bold text-text-secondary uppercase tracking-[0.2em]">POWERING DECENTRALIZED INNOVATION</span>
+              <div className="flex flex-wrap justify-center items-center gap-12 opacity-40 grayscale hover:grayscale-0 transition-all duration-500">
+                <div className="flex items-center gap-2 text-2xl font-bold">ALGORAND</div>
+                <div className="flex items-center gap-2 text-2xl font-bold">PERA WALLET</div>
+                <div className="flex items-center gap-2 text-2xl font-bold">DAO NODE</div>
+              </div>
+            </motion.div>
+          </div>
         </section>
 
         {/* --- Core Features --- */}
