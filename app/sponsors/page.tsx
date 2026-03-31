@@ -238,7 +238,7 @@ export default function SponsorDashboard() {
                       {user.walletAddress}
                     </span>
                   </div>
-                  <button 
+                  <button
                     onClick={() => {
                       navigator.clipboard.writeText(user.walletAddress);
                       toast.success('Address copied to clipboard!');
@@ -295,7 +295,7 @@ export default function SponsorDashboard() {
               </div>
               <p className="text-[10px] text-slate-400 mt-2 font-medium">Released to teams</p>
             </div>
-            
+
             <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-200 border-l-4 border-l-orange-400 min-h-[110px] flex flex-col justify-center">
               <div className="flex items-center justify-between">
                 <div>

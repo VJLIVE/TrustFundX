@@ -14,7 +14,13 @@ import {
   Shield,
   Zap,
   Clock,
-  Activity
+  Activity,
+  Globe,
+  Binary,
+  Layers,
+  ChevronRight,
+  ShieldCheck,
+  Cpu
 } from 'lucide-react';
 import { useWallet } from '@/contexts/WalletContext';
 
@@ -32,9 +38,7 @@ const Navbar = () => {
             body: JSON.stringify({ walletAddress: accountAddress }),
           });
           const data = await res.json();
-          if (res.ok && data.user) {
-            setUserRole(data.user.role);
-          }
+          if (res.ok && data.user) setUserRole(data.user.role);
         } catch (err) {
           setUserRole(null);
         }
@@ -46,245 +50,224 @@ const Navbar = () => {
   }, [accountAddress, isConnected]);
 
   return (
-    <nav className="flex items-center justify-between px-8 py-3 bg-transparent sticky top-0 z-50 backdrop-blur-sm bg-white/80">
-      <div className="flex items-center gap-12">
-        <Link href="/" className="flex items-center gap-3">
-          <div className="bg-black text-white w-7 h-7 flex items-center justify-center font-bold text-lg rounded-sm transform -rotate-6">
-            X
-          </div>
-          <span className="font-semibold text-2xl tracking-tight text-black ml-2 -mt-1">TrustFundX</span>
-        </Link>
-        <div className="h-8 w-[1px] bg-gray-300 mx-2" />
-        <div className="hidden md:flex gap-8 text-[15px] font-medium text-gray-800">
-          <Link href="/how-it-works" className="text-blue-600 transition-colors">How It Works</Link>
-          <Link href="/sponsors-info" className="hover:text-black transition-colors">Sponsors</Link>
-          <Link href="/governance" className="hover:text-black transition-colors">Governance</Link>
-          <Link href="/faqs" className="hover:text-black transition-colors">FAQs</Link>
-        </div>
-      </div>
-      <div className="flex items-center gap-3">
-        {isConnected && userRole ? (
-          <Link href={`/${userRole}s`}>
-            <button className="flex items-center gap-2 bg-[#214A9D] text-white text-[15px] font-medium px-5 py-2 rounded-lg hover:bg-[#1A3B81] transition-all shadow-md">
-              <Activity size={18} strokeWidth={2} />
-              Dashboard
-            </button>
+    <nav className="fixed top-0 left-0 right-0 z-[100] bg-white/70 backdrop-blur-xl border-b border-border px-8 py-4">
+      <div className="max-w-7xl mx-auto flex items-center justify-between">
+        <div className="flex items-center gap-10">
+          <Link href="/" className="flex items-center gap-3">
+            <div className="bg-black text-white w-8 h-8 flex items-center justify-center font-bold text-lg rounded-xl shadow-lg transition-transform hover:rotate-6">X</div>
+            <span className="font-bold text-xl tracking-tighter">TrustFundX</span>
           </Link>
-        ) : (
-          <>
-            <Link href="/login">
-              <button className="text-[15px] font-medium px-5 py-2 border border-gray-200 bg-white rounded-lg shadow-sm hover:bg-gray-50 transition-all text-gray-800">
-                Log In
+          <div className="hidden md:flex gap-8 text-[11px] font-black uppercase tracking-widest text-text-secondary">
+            <Link href="/how-it-works" className="text-primary transition-colors border-b-2 border-primary pb-1">How It Works</Link>
+            <Link href="/sponsors-info" className="hover:text-primary transition-colors">Sponsors</Link>
+            <Link href="/governance" className="hover:text-primary transition-colors">Governance</Link>
+            <Link href="/faqs" className="hover:text-primary transition-colors">FAQs</Link>
+          </div>
+        </div>
+        <div className="flex items-center gap-4">
+          {isConnected && userRole ? (
+            <Link href={`/${userRole}s`}>
+              <button className="flex items-center gap-2 bg-text-primary text-white text-xs font-black px-6 py-2.5 rounded-full hover:bg-black transition-all shadow-lg hover:-translate-y-0.5 uppercase tracking-widest">
+                <Activity size={16} /> Dashboard
               </button>
             </Link>
-            <Link href="/signup">
-              <button className="flex items-center gap-2 bg-[#214A9D] text-white text-[15px] font-medium px-5 py-2 rounded-lg hover:bg-[#1A3B81] transition-all shadow-md">
-                <Wallet size={18} strokeWidth={2} />
-                Sign Up
-              </button>
-            </Link>
-          </>
-        )}
+          ) : (
+            <div className="flex items-center gap-3">
+               <Link href="/login" className="text-xs font-black uppercase tracking-widest text-text-secondary hover:text-text-primary transition-colors px-4">Sign In</Link>
+               <Link href="/signup">
+                  <button className="flex items-center gap-2 bg-black text-white text-xs font-black px-6 py-2.5 rounded-full hover:bg-black/90 transition-all shadow-lg hover:-translate-y-0.5 uppercase tracking-widest">
+                    <Wallet size={16} /> Authorize
+                  </button>
+               </Link>
+            </div>
+          )}
+        </div>
       </div>
     </nav>
   );
 };
 
-const StepCard = ({ number, title, desc, icon: Icon, delay }: { number: number, title: string, desc: string, icon: any, delay: number }) => (
+const StepCard = ({ number, title, desc, icon: Icon, delay, last }: { number: number, title: string, desc: string, icon: any, delay: number, last?: boolean }) => (
   <motion.div
-    initial={{ opacity: 0, y: 30 }}
-    whileInView={{ opacity: 1, y: 0 }}
+    initial={{ opacity: 0, x: -20 }}
+    whileInView={{ opacity: 1, x: 0 }}
     viewport={{ once: true }}
     transition={{ delay: delay * 0.1 }}
-    whileHover={{ y: -5 }}
-    className="relative p-8 bg-white border border-gray-100 rounded-2xl shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] hover:shadow-xl transition-all group overflow-hidden"
+    className="flex gap-10 items-start group relative"
   >
-    <div className="absolute top-[-50%] left-[-20%] w-[150%] h-[150%] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_10%_10%,rgba(33,74,157,0.08)_0%,transparent_40%)]" />
-    
-    <div className="flex items-start gap-6 relative z-10">
-      <div className="flex-shrink-0 relative">
-        <div className="w-16 h-16 flex items-center justify-center rounded-full bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 group-hover:scale-110 transition-transform duration-300">
-          <Icon size={28} className="text-blue-600" strokeWidth={1.8} />
-        </div>
-        {/* Number badge positioned at bottom-right of icon */}
-        <div className="absolute -bottom-2 -right-2 w-10 h-10 flex items-center justify-center rounded-full bg-blue-600 text-white font-bold text-lg shadow-lg border-2 border-white">
+    <div className="flex flex-col items-center flex-shrink-0 relative z-10">
+       <div className="w-14 h-14 bg-white border-2 border-border rounded-2xl flex items-center justify-center font-black text-xl text-text-secondary group-hover:border-primary group-hover:text-primary transition-all shadow-sm">
           {number}
-        </div>
-      </div>
-      <div className="flex-1 pt-1">
-        <h3 className="text-xl font-semibold text-slate-900 mb-3">{title}</h3>
-        <p className="text-slate-600 text-[15px] leading-relaxed">
+       </div>
+       {!last && <div className="w-1 h-32 bg-border group-hover:bg-primary/30 transition-colors" />}
+    </div>
+    <div className="bg-white border border-border p-10 rounded-[32px] shadow-premium flex-1 group-hover:border-primary/20 group-hover:shadow-2xl transition-all duration-500 mb-12">
+       <div className="w-12 h-12 bg-primary/5 text-primary rounded-xl flex items-center justify-center mb-6">
+          <Icon size={24} strokeWidth={2.5} />
+       </div>
+       <h3 className="text-2xl font-black text-text-primary mb-4 tracking-tight uppercase tracking-tighter">{title}</h3>
+       <p className="text-text-secondary font-medium leading-relaxed max-w-2xl">
           {desc}
-        </p>
-      </div>
+       </p>
     </div>
   </motion.div>
 );
 
 const FeatureHighlight = ({ title, desc, icon: Icon }: { title: string, desc: string, icon: any }) => (
   <motion.div
-    whileHover={{ scale: 1.05 }}
-    className="p-6 bg-gradient-to-br from-white to-blue-50 border border-blue-100 rounded-xl shadow-sm hover:shadow-md transition-all"
+    whileHover={{ y: -8 }}
+    className="p-10 bg-white border border-border rounded-[40px] shadow-premium hover:shadow-2xl transition-all duration-500 group"
   >
-    <div className="w-12 h-12 flex items-center justify-center rounded-lg bg-blue-600 text-white mb-4">
-      <Icon size={24} strokeWidth={2} />
+    <div className="w-16 h-16 bg-primary text-white rounded-2xl flex items-center justify-center mb-8 shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform duration-500">
+      <Icon size={28} strokeWidth={2.5} />
     </div>
-    <h4 className="text-lg font-semibold text-slate-900 mb-2">{title}</h4>
-    <p className="text-slate-600 text-sm leading-relaxed">{desc}</p>
+    <h4 className="text-xl font-black uppercase tracking-tighter text-text-primary mb-4">{title}</h4>
+    <p className="text-text-secondary font-medium text-sm leading-relaxed">{desc}</p>
   </motion.div>
 );
 
 export default function HowItWorksPage() {
   return (
-    <div className="min-h-screen bg-[#F8F9FA] font-sans text-slate-900 selection:bg-blue-100">
+    <div className="min-h-screen bg-background text-text-primary selection:bg-primary/10 pb-32">
       <Navbar />
 
-      <main className="max-w-7xl mx-auto px-8 py-16">
+      <main className="max-w-7xl mx-auto px-8 pt-40">
         {/* Hero Section */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-20"
+          className="text-center mb-32"
         >
-          <div className="inline-block px-4 py-1.5 bg-blue-100 text-blue-700 rounded-full text-sm font-medium mb-6">
-            Understanding TrustFundX
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/5 text-primary rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-8 border border-primary/10 shadow-sm">
+            <Cpu size={12} strokeWidth={3} /> Protocol Blueprint
           </div>
-          <h1 className="text-5xl md:text-6xl font-bold text-[#1A1C1E] tracking-tight mb-6">
-            How It Works
+          <h1 className="text-6xl md:text-7xl font-black text-text-primary tracking-tighter mb-8 leading-[0.9]">
+            The Architecture <br className="hidden md:block" /> of Trust.
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            TrustFundX revolutionizes grant management through blockchain technology,
-            milestone-based payments, and decentralized governance.
+          <p className="text-xl text-text-secondary max-w-2xl mx-auto font-medium leading-relaxed">
+            TrustFundX replaces traditional paper-based grants with immutable code, ensuring zero latency and total capital accountability.
           </p>
         </motion.section>
 
-        {/* Process Steps */}
-        <section className="mb-20">
-          <motion.h2
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            className="text-3xl font-bold text-center mb-12"
-          >
-            The Complete Process
-          </motion.h2>
+        {/* --- Process Flow --- */}
+        <section className="mb-40 max-w-4xl mx-auto">
+          <div className="flex items-center justify-between mb-16">
+             <h2 className="text-3xl font-black uppercase tracking-tight">The Protocol Sequence</h2>
+             <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em] bg-primary/5 px-4 py-2 rounded-full">Synchronized v2.4</span>
+          </div>
           
-          <div className="space-y-6">
+          <div className="relative">
             <StepCard
               number={1}
-              title="Connect Your Wallet"
-              desc="Students, sponsors, and voters connect their Pera Wallet to authenticate securely without passwords. Your wallet address becomes your unique identity on the platform."
+              title="Identity Authorization"
+              desc="Participants authenticate via Pera Wallet. Your cryptographic signature becomes your unique protocol identity, eliminating passwords and ensuring non-repudiation."
               icon={Wallet}
               delay={0}
             />
             
             <StepCard
               number={2}
-              title="Create or Join a Grant"
-              desc="Sponsors create grants by specifying the student's wallet address, number of milestones, and required votes. The smart contract is deployed on Algorand blockchain to manage funds transparently."
+              title="Contract Deployment"
+              desc="Sponsors initialize Grant Smart Contracts on the Algorand ledger, defining Phased Milestones and the verifying Voter Quorum requirements."
               icon={CircleDollarSign}
               delay={1}
             />
             
             <StepCard
               number={3}
-              title="Fund the Grant Contract"
-              desc="Sponsors transfer ALGO tokens to the grant's smart contract. Funds are locked on-chain and can only be released when milestones are approved by voters, ensuring security and transparency."
+              title="Capital Lock-up"
+              desc="Allocated capital is transferred into a non-custodial TEAL escrow. Funds are cryptographically locked until milestone consensus is achieved."
               icon={Shield}
               delay={2}
             />
             
             <StepCard
               number={4}
-              title="Complete Milestones"
-              desc="Students work on their projects and submit milestone completions with proof-of-work (documents, reports, code). Each submission includes notes and file uploads for voter review."
+              title="Artifact Logging"
+              desc="Students submit technical deliverables directly to the protocol console. These artifacts serve as the evidence layer for voter auditing."
               icon={FileText}
               delay={3}
             />
             
             <StepCard
               number={5}
-              title="Community Voting"
-              desc="Registered voters review milestone submissions and cast their approval votes on the blockchain. Each vote is recorded immutably, creating a transparent audit trail for all decisions."
+              title="Distributed Consensus"
+              desc="Verified Voters audit submissions and sign approval transactions. The protocol tracks signatures in real-time until the quorum threshold is met."
               icon={Vote}
               delay={4}
             />
             
             <StepCard
               number={6}
-              title="Automatic Fund Release"
-              desc="When a milestone receives the required number of approvals, the smart contract automatically releases the allocated funds to the student's wallet. No intermediaries, no delays."
+              title="Atomic Settlement"
+              desc="Upon consensus, the smart contract executes an Atomic Transfer, releasing funds to the student's wallet in ~3.3 seconds. No middleman. No delay."
               icon={CheckCircle}
               delay={5}
+              last
             />
           </div>
         </section>
 
-        {/* Key Features */}
-        <section className="mb-20">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-3xl font-bold mb-4">Why TrustFundX?</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Built on blockchain technology to eliminate trust issues and ensure every transaction is transparent and verifiable.
-            </p>
-          </motion.div>
+        {/* --- Core Features Matrix --- */}
+        <section className="mb-40">
+          <div className="text-center mb-16">
+             <h2 className="text-3xl font-black uppercase tracking-tight">Why TrustFundX?</h2>
+             <p className="text-text-secondary font-medium max-w-lg mx-auto mt-2">Institutional-grade grant infrastructure built on carbon-negative blockchain technology.</p>
+          </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-3 gap-10">
             <FeatureHighlight
-              title="Blockchain Verified"
-              desc="Every transaction, vote, and milestone approval is permanently recorded on Algorand blockchain for complete transparency."
-              icon={Shield}
+              title="Ledger Verified"
+              desc="Total transparency. Every transaction and consensus vote is permanently indexed on the public Algorand blockchain."
+              icon={Binary}
             />
             <FeatureHighlight
-              title="Instant Payments"
-              desc="Smart contracts automatically release funds when conditions are met—no manual processing or waiting periods."
+              title="Instant Liquidity"
+              desc="Smart contracts eliminate administrative overhead, delivering capital at the exact moment of milestone success."
               icon={Zap}
             />
             <FeatureHighlight
-              title="Real-Time Tracking"
-              desc="Monitor grant progress, milestone statuses, and fund flow in real-time through intuitive dashboards."
-              icon={Clock}
+              title="Consensus Audit"
+              desc="Community-driven governance ensures that capital is only released for high-quality, verified student performance."
+              icon={ShieldCheck}
             />
           </div>
         </section>
 
-        {/* CTA Banner */}
+        {/* --- Global Action Banner --- */}
         <motion.section
-          initial={{ opacity: 0, scale: 0.99 }}
+          initial={{ opacity: 0, scale: 0.98 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
-          className="relative group overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 p-12 text-center shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-1"
+          className="relative rounded-[56px] bg-text-primary p-16 lg:p-24 text-center shadow-[0_40px_100px_-20px_rgba(0,0,0,0.3)] overflow-hidden"
         >
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.1)_0%,transparent_60%)] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,#22D3EE,transparent)] opacity-10 pointer-events-none" />
+           <div className="absolute inset-0 bg-[linear-gradient(to_right,#1E293B_1px,transparent_1px),linear-gradient(to_bottom,#1E293B_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-20" />
           
-          <div className="relative z-10">
-            <h2 className="text-4xl font-bold text-white mb-4">Ready to Get Started?</h2>
-            <p className="text-blue-100 text-lg mb-8 max-w-2xl mx-auto">
-              Join TrustFundX today and experience transparent, milestone-based grant management powered by blockchain technology.
+          <div className="relative z-10 max-w-3xl mx-auto">
+            <h2 className="text-5xl md:text-6xl font-black text-white mb-6 tracking-tight leading-[0.95] uppercase tracking-tighter">Ready to <br /> Initialize?</h2>
+            <p className="text-gray-400 text-xl font-medium mb-12 leading-relaxed">
+              Activate your protocol identity today and start deploying capital or building the decentralized future.
             </p>
-            <div className="flex gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/signup">
-                <button className="bg-white text-blue-600 text-[15px] font-semibold px-8 py-3 rounded-lg hover:bg-blue-50 transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 flex items-center gap-2">
-                  Sign Up Now
-                  <ArrowRight size={18} />
+                <button className="bg-primary text-white text-xs font-black px-10 py-5 rounded-2xl hover:bg-primary/90 transition-all shadow-xl shadow-primary/20 hover:-translate-y-1 active:translate-y-0 flex items-center justify-center gap-2 uppercase tracking-widest">
+                  Deploy Identity <ArrowRight size={18} strokeWidth={3} />
                 </button>
               </Link>
               <Link href="/login">
-                <button className="border-2 border-white text-white text-[15px] font-semibold px-8 py-3 rounded-lg hover:bg-white/10 transition-all flex items-center gap-2">
-                  Log In
+                <button className="bg-white/10 text-white border border-white/20 text-xs font-black px-10 py-5 rounded-2xl hover:bg-white/20 transition-all backdrop-blur-md uppercase tracking-widest">
+                  Connect Node
                 </button>
               </Link>
             </div>
           </div>
         </motion.section>
 
-        <footer className="mt-16 text-center text-gray-500 text-sm">
-          <p>© 2024 TrustFundX. All rights reserved. | <Link href="/" className="hover:text-gray-700">Home</Link></p>
+        <footer className="mt-32 pt-16 border-t border-border text-center">
+           <p className="text-[10px] font-black text-text-secondary uppercase tracking-[0.3em] opacity-40">
+             © 2024 TrustFundX. Sovereign Capital Infrastructure.
+           </p>
         </footer>
       </main>
     </div>

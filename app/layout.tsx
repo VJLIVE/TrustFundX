@@ -1,78 +1,19 @@
-import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { WalletProvider } from "@/contexts/WalletContext";
 import { Toaster } from "react-hot-toast";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
   subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
 });
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-export const viewport: Viewport = {
-  width: 'device-width',
-  initialScale: 1,
-  maximumScale: 5,
-  userScalable: true,
-  themeColor: '#667eea',
-};
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://trustfundx.vercel.app'),
-  title: {
-    default: 'TrustFundX - Blockchain-Based Grant & Fund Tracking',
-    template: '%s | TrustFundX'
-  },
-  description: 'Transparent, milestone-based grant and fund tracking system built on blockchain technology. Secure funding for students, sponsors, and voters with smart contract-powered transparency.',
-  keywords: ['blockchain', 'grant tracking', 'fund management', 'student funding', 'transparent grants', 'milestone-based funding', 'smart contracts', 'Algorand', 'Pera Wallet', 'educational grants', 'DAO governance', 'decentralized funding'],
-  authors: [{ name: 'TrustFundX Team' }],
-  creator: 'TrustFundX',
-  publisher: 'TrustFundX',
-  formatDetection: {
-    email: false,
-    address: false,
-    telephone: false,
-  },
-  manifest: '/manifest.json',
-  icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon.ico',
-    apple: '/favicon.ico',
-  },
-  openGraph: {
-    type: 'website',
-    locale: 'en_US',
-    url: 'https://trustfundx.vercel.app',
-    title: 'TrustFundX - Blockchain-Based Grant & Fund Tracking',
-    description: 'Transparent, milestone-based grant and fund tracking system built on blockchain technology. Secure funding for students, sponsors, and voters.',
-    siteName: 'TrustFundX',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'TrustFundX - Blockchain-Based Grant & Fund Tracking',
-    description: 'Transparent, milestone-based grant and fund tracking system built on blockchain technology.',
-    creator: '@trustfundx',
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
-    },
-  },
-  verification: {
-    google: 'your-google-verification-code',
-    yandex: 'your-yandex-verification-code',
-  },
+  title: "TrustFundX | Premium Blockchain Grant Infrastructure",
+  description: "Transparent, milestone-based funding on Algorand for students, sponsors, and voters.",
+  viewport: "width=device-width, initial-scale=1, maximum-scale=1",
 };
 
 export default function RootLayout({
@@ -80,71 +21,42 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'WebApplication',
-    name: 'TrustFundX',
-    applicationCategory: 'FinanceApplication',
-    operatingSystem: 'Web',
-    description: 'Transparent, milestone-based grant and fund tracking system built on blockchain technology',
-    offers: {
-      '@type': 'Offer',
-      price: '0',
-      priceCurrency: 'USD',
-    },
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: '4.8',
-      ratingCount: '127',
-    },
-    featureList: [
-      'Blockchain-based transparency',
-      'Milestone-based fund disbursement',
-      'Smart contract integration',
-      'DAO-style governance',
-      'Pera Wallet integration',
-      'Real-time tracking',
-    ],
-  };
-
   return (
-    <html lang="en">
+    <html lang="en" className={inter.className} suppressHydrationWarning>
       <head>
         <link rel="author" type="text/plain" href="/humans.txt" />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
       </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className="bg-background text-text-primary min-h-screen">
         <WalletProvider>
-          <Toaster
-            position="top-right"
+          {children}
+          <Toaster 
+            position="bottom-right"
             toastOptions={{
-              duration: 4000,
               style: {
-                background: '#363636',
-                color: '#fff',
+                background: 'rgba(255, 255, 255, 0.8)',
+                backdropFilter: 'blur(16px)',
+                border: '1px solid rgba(226, 232, 240, 0.8)',
+                color: '#0F172A',
+                borderRadius: '12px',
+                padding: '12px 16px',
+                fontSize: '14px',
+                fontWeight: 500,
+                boxShadow: '0 8px 32px rgba(37, 99, 235, 0.08)',
               },
               success: {
-                duration: 3000,
                 iconTheme: {
-                  primary: '#10b981',
-                  secondary: '#fff',
+                  primary: '#2563EB',
+                  secondary: '#FFFFFF',
                 },
               },
               error: {
-                duration: 5000,
                 iconTheme: {
-                  primary: '#ef4444',
-                  secondary: '#fff',
+                  primary: '#EF4444',
+                  secondary: '#FFFFFF',
                 },
               },
             }}
           />
-          {children}
         </WalletProvider>
       </body>
     </html>
