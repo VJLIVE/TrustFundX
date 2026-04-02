@@ -1,17 +1,44 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useWallet } from '@/contexts/WalletContext';
 import toast from 'react-hot-toast';
 
+interface User {
+  name: string;
+  email: string;
+  organization: string;
+  walletAddress: string;
+  role: string;
+}
+
+interface Grant {
+  _id: string;
+  sponsorAddress: string;
+  teamAddress: string;
+  milestoneCount: number;
+  status: string;
+}
+
+interface Milestone {
+  _id: string;
+  milestoneId: number;
+  description: string;
+  amount: number;
+  approvals: number;
+  paid: boolean;
+  submissionNote?: string;
+  submissionFileUrl?: string;
+}
+
 export default function StudentDashboard() {
   const router = useRouter();
   const { accountAddress, disconnectWallet } = useWallet();
-  const [user, setUser] = useState<any>(null);
-  const [grants, setGrants] = useState<any[]>([]);
-  const [milestones, setMilestones] = useState<any[]>([]);
+  const [user, setUser] = useState<User | null>(null);
+  const [grants, setGrants] = useState<Grant[]>([]);
+  const [milestones, setMilestones] = useState<Milestone[]>([]);
   const [submissionNote, setSubmissionNote] = useState<{ [key: string]: string }>({});
   const [uploadingFile, setUploadingFile] = useState<string | null>(null);
   const [submittingMilestone, setSubmittingMilestone] = useState<string | null>(null);
@@ -32,13 +59,7 @@ export default function StudentDashboard() {
     setUser(parsedUser);
   }, [router]);
 
-  useEffect(() => {
-    if (user && accountAddress) {
-      fetchGrants();
-    }
-  }, [user, accountAddress]);
-
-  const fetchGrants = async () => {
+  const fetchGrants = useCallback(async () => {
     if (!accountAddress) return;
     
     try {
@@ -55,7 +76,13 @@ export default function StudentDashboard() {
     } catch (err) {
       console.error('Failed to fetch grants:', err);
     }
-  };
+  }, [accountAddress]);
+
+  useEffect(() => {
+    if (user && accountAddress) {
+      fetchGrants();
+    }
+  }, [user, accountAddress, fetchGrants]);
 
   const handleLogout = () => {
     disconnectWallet();
@@ -91,15 +118,17 @@ export default function StudentDashboard() {
       }
       
       return data.url;
-    } catch (error: any) {
+    } catch (error) {
       console.error('File upload error:', error);
       
-      if (error.message.includes('Filestack API key not configured')) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      
+      if (errorMessage.includes('Filestack API key not configured')) {
         toast.error('File upload is not configured. Please contact the administrator.', {
           duration: 6000,
         });
       } else {
-        toast.error(`Failed to upload file: ${error.message}`);
+        toast.error(`Failed to upload file: ${errorMessage}`);
       }
       
       return null;
@@ -108,7 +137,7 @@ export default function StudentDashboard() {
     }
   };
 
-  const handleSubmitMilestone = async (milestone: any) => {
+  const handleSubmitMilestone = async (milestone: Milestone) => {
     try {
       setSubmittingMilestone(milestone._id);
       
@@ -155,7 +184,6 @@ export default function StudentDashboard() {
 
   if (!user) return null;
 
-  const totalMilestoneAmount = milestones.reduce((sum, m) => sum + (m.amount || 0), 0);
   const totalReceived = milestones.filter(m => m.paid).reduce((sum, m) => sum + (m.amount || 0), 0);
   const completedMilestones = milestones.filter(m => m.paid).length;
 

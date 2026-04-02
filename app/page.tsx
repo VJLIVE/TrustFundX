@@ -1,23 +1,17 @@
 'use client';
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
   Users,
-  CircleDollarSign,
-  Vote,
-  ArrowRight,
-  Wallet,
   Activity,
   Shield,
   Zap,
-  Globe,
-  Lock,
-  ChevronRight,
-  ChevronDown
+  Globe
 } from 'lucide-react';
 import { useWallet } from '@/contexts/WalletContext';
+import Footer from './components/Footer';
 
 // --- Blockchain Network Data ---
 const networkNodes = [
@@ -43,16 +37,27 @@ const networkLines = [
   [90, 45, 95, 85]
 ];
 
+// Generate random values once at module level (outside component)
+const packetRandomValues = networkLines.map(() => ({
+  speed: 2 + Math.random() * 2,
+  delay: Math.random() * 4,
+}));
+
+const nodeRandomAnimations = networkNodes.map(() => ({
+  duration: 4 + Math.random() * 2,
+  delay: Math.random() * 2,
+}));
+
 // --- Packet Animation Hook ---
 const usePackets = () =>
-  useMemo(() =>
-    networkLines.map(([x1, y1, x2, y2]) => ({
+  useMemo(() => 
+    networkLines.map(([x1, y1, x2, y2], index) => ({
       x1,
       y1,
       x2,
       y2,
-      speed: 2 + Math.random() * 2,
-      delay: Math.random() * 4,
+      speed: packetRandomValues[index].speed,
+      delay: packetRandomValues[index].delay,
     }))
   , []);
 
@@ -90,10 +95,10 @@ const PremiumBackground = () => {
                 opacity: [0.8, 1, 0.8],
               }}
               transition={{
-                duration: 4 + Math.random() * 2,
+                duration: nodeRandomAnimations[idx].duration,
                 repeat: Infinity,
                 ease: "easeInOut",
-                delay: Math.random() * 2,
+                delay: nodeRandomAnimations[idx].delay,
               }}
             >
               <g transform={`translate(${cx}, ${cy}) scale(0.1)`}>
@@ -217,7 +222,13 @@ const Navbar = () => {
   );
 };
 
-const FeatureCard = ({ icon: Icon, title, desc, delay, color }: any) => (
+const FeatureCard = ({ icon: Icon, title, desc, delay, color }: {
+  icon: React.ElementType;
+  title: string;
+  desc: string;
+  delay: number;
+  color: string;
+}) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
     whileInView={{ opacity: 1, y: 0 }}
@@ -230,9 +241,6 @@ const FeatureCard = ({ icon: Icon, title, desc, delay, color }: any) => (
     </div>
     <h3 className="text-xl font-bold text-text-primary mb-3">{title}</h3>
     <p className="text-text-secondary leading-relaxed text-[15px]">{desc}</p>
-    <div className="mt-6 flex items-center text-primary font-bold text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-      Learn more <ArrowRight size={16} className="ml-1" />
-    </div>
   </motion.div>
 );
 
@@ -272,7 +280,7 @@ export default function LandingPage() {
               transition={{ delay: 0.2 }}
               className="text-xl text-text-secondary max-w-2xl mx-auto leading-relaxed mb-12 text-balance"
             >
-              The world's most transparent grant management protocol. Automate funding releases through on-chain milestones and community governance.
+              The world&apos;s most transparent grant management protocol. Automate funding releases through on-chain milestones and community governance.
             </motion.p>
 
             <motion.div
@@ -282,7 +290,7 @@ export default function LandingPage() {
               className="flex flex-col sm:flex-row items-center justify-center gap-4"
             >
               <button className="w-full sm:w-auto bg-primary text-white font-bold text-lg px-10 py-4 rounded-full shadow-2xl shadow-primary/30 hover:bg-primary/90 hover:-translate-y-1 transition-all">
-                Initialize Protocol
+                Get Started
               </button>
               <button className="w-full sm:w-auto bg-white border border-border text-text-primary font-bold text-lg px-10 py-4 rounded-full shadow-premium hover:bg-background transition-all">
                 View Governance
@@ -383,57 +391,17 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* --- Footer --- */}
-        <footer className="py-20 px-6 max-w-7xl mx-auto border-t border-border">
-          <div className="flex flex-col md:flex-row justify-between items-start gap-12">
-            <div className="max-w-xs">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="bg-primary text-white w-8 h-8 flex items-center justify-center font-bold text-lg rounded-lg shadow-lg">X</div>
-                <span className="font-bold text-xl tracking-tighter">TrustFundX</span>
-              </div>
-              <p className="text-text-secondary text-sm leading-relaxed">
-                The definitive infrastructure for decentralized grant management. Built for transparency, governed by community.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-12">
-              <div className="space-y-4">
-                <h4 className="font-bold text-sm uppercase tracking-widest text-text-primary">Protocol</h4>
-                <ul className="space-y-2 text-sm text-text-secondary">
-                  <li className="hover:text-primary transition-colors cursor-pointer">Security Audit</li>
-                  <li className="hover:text-primary transition-colors cursor-pointer">Technical Spec</li>
-                  <li className="hover:text-primary transition-colors cursor-pointer">Governance</li>
-                </ul>
-              </div>
-              <div className="space-y-4">
-                <h4 className="font-bold text-sm uppercase tracking-widest text-text-primary">Social</h4>
-                <ul className="space-y-2 text-sm text-text-secondary">
-                  <li className="hover:text-primary transition-colors cursor-pointer">X / Twitter</li>
-                  <li className="hover:text-primary transition-colors cursor-pointer">Discord</li>
-                  <li className="hover:text-primary transition-colors cursor-pointer">Github</li>
-                </ul>
-              </div>
-              <div className="space-y-4">
-                <h4 className="font-bold text-sm uppercase tracking-widest text-text-primary">Legal</h4>
-                <ul className="space-y-2 text-sm text-text-secondary">
-                  <li className="hover:text-primary transition-colors cursor-pointer">Privacy</li>
-                  <li className="hover:text-primary transition-colors cursor-pointer">Terms</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-20 pt-8 border-t border-border flex justify-between items-center text-xs font-bold text-text-secondary tracking-widest uppercase">
-            <span>© 2024 TrustFundX Autonomous Protocol</span>
-            <span>DEPLOYED ON ALGORAND TESTNET</span>
-          </div>
-        </footer>
+        <Footer />
       </main>
     </div>
   );
 }
 
-const CheckIcon = ({ className, size, strokeWidth }: any) => (
+const CheckIcon = ({ className, size, strokeWidth }: {
+  className?: string;
+  size: number;
+  strokeWidth: number;
+}) => (
   <svg
     className={className}
     width={size}

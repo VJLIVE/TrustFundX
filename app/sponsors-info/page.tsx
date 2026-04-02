@@ -10,24 +10,17 @@ import {
   Bell,
   ArrowRight,
   CheckCircle,
-  TrendingUp,
   FileText,
-  Lock,
-  Eye,
   Users,
-  Award,
   Activity,
   Globe,
-  Binary,
-  Layers,
-  ChevronRight,
   ShieldCheck,
-  Cpu,
   PieChart,
   Zap,
   Target
 } from 'lucide-react';
 import { useWallet } from '@/contexts/WalletContext';
+import Footer from '../components/Footer';
 
 const Navbar = () => {
   const { accountAddress, isConnected } = useWallet();
@@ -44,7 +37,7 @@ const Navbar = () => {
           });
           const data = await res.json();
           if (res.ok && data.user) setUserRole(data.user.role);
-        } catch (err) {
+        } catch {
           setUserRole(null);
         }
       } else {
@@ -92,7 +85,12 @@ const Navbar = () => {
   );
 };
 
-const AdvantageCard = ({ title, desc, icon: Icon, color }: { title: string, desc: string, icon: any, color: string }) => (
+const AdvantageCard = ({ title, desc, icon: Icon, color }: { 
+  title: string;
+  desc: string;
+  icon: React.ElementType;
+  color: string;
+}) => (
   <motion.div
     whileHover={{ y: -8 }}
     className="relative p-10 bg-white border border-border rounded-[32px] shadow-premium hover:shadow-2xl transition-all group overflow-hidden"
@@ -112,7 +110,11 @@ const AdvantageCard = ({ title, desc, icon: Icon, color }: { title: string, desc
   </motion.div>
 );
 
-const StatCard = ({ value, label, icon: Icon }: { value: string, label: string, icon: any }) => (
+const StatCard = ({ value, label, icon: Icon }: { 
+  value: string;
+  label: string;
+  icon: React.ElementType;
+}) => (
   <motion.div
     whileHover={{ scale: 1.05 }}
     className="p-8 bg-white border border-border rounded-[32px] shadow-premium group hover:border-primary/20 transition-all duration-300"
@@ -242,7 +244,7 @@ export default function SponsorsPage() {
                        <Zap size={16} /> Instant Execution
                     </div>
                     <p className="text-[10px] font-bold text-text-secondary uppercase leading-relaxed">
-                       Built on Algorand's high-performance settlement layer with zero administrative latency.
+                       Built on Algorand&apos;s high-performance settlement layer with zero administrative latency.
                     </p>
                  </div>
               </div>
@@ -291,7 +293,7 @@ export default function SponsorsPage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/signup">
                 <button className="bg-primary text-white text-xs font-black px-10 py-5 rounded-2xl hover:bg-primary/90 transition-all shadow-xl shadow-primary/20 hover:-translate-y-1 active:translate-y-0 flex items-center justify-center gap-2 uppercase tracking-widest">
-                  Deploy Capital <ArrowRight size={18} strokeWidth={3} />
+                  Get Started <ArrowRight size={18} strokeWidth={3} />
                 </button>
               </Link>
               <Link href="/how-it-works">
@@ -303,11 +305,7 @@ export default function SponsorsPage() {
           </div>
         </motion.section>
 
-        <footer className="mt-32 pt-16 border-t border-border text-center">
-           <p className="text-[10px] font-black text-text-secondary uppercase tracking-[0.3em] opacity-40">
-             © 2024 TrustFundX. Sovereign Capital Infrastructure.
-           </p>
-        </footer>
+        <Footer />
       </main>
     </div>
   );

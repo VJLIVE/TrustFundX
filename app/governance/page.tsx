@@ -7,9 +7,6 @@ import {
   Wallet,
   Vote,
   Shield,
-  CheckCircle,
-  XCircle,
-  ArrowRight,
   Users,
   FileCheck,
   Scale,
@@ -17,7 +14,6 @@ import {
   Lock,
   Zap,
   AlertCircle,
-  TrendingUp,
   Activity,
   Globe,
   Binary,
@@ -27,6 +23,7 @@ import {
   Cpu
 } from 'lucide-react';
 import { useWallet } from '@/contexts/WalletContext';
+import Footer from '../components/Footer';
 
 const Navbar = () => {
   const { accountAddress, isConnected } = useWallet();
@@ -43,7 +40,7 @@ const Navbar = () => {
           });
           const data = await res.json();
           if (res.ok && data.user) setUserRole(data.user.role);
-        } catch (err) {
+        } catch {
           setUserRole(null);
         }
       } else {
@@ -91,7 +88,12 @@ const Navbar = () => {
   );
 };
 
-const PillarCard = ({ title, desc, icon: Icon, color }: { title: string, desc: string, icon: any, color: string }) => (
+const PillarCard = ({ title, desc, icon: Icon, color }: { 
+  title: string;
+  desc: string;
+  icon: React.ElementType;
+  color: string;
+}) => (
   <motion.div
     whileHover={{ y: -8 }}
     className="relative p-10 bg-white border border-border rounded-[32px] shadow-premium hover:shadow-2xl transition-all group overflow-hidden"
@@ -111,7 +113,13 @@ const PillarCard = ({ title, desc, icon: Icon, color }: { title: string, desc: s
   </motion.div>
 );
 
-const VotingStep = ({ number, title, desc, icon: Icon, last }: { number: number, title: string, desc: string, icon: any, last?: boolean }) => (
+const VotingStep = ({ number, title, desc, icon: Icon, last }: { 
+  number: number;
+  title: string;
+  desc: string;
+  icon: React.ElementType;
+  last?: boolean;
+}) => (
   <div className="flex gap-8 items-start relative">
     <div className="flex flex-col items-center flex-shrink-0 relative z-10">
       <div className="w-16 h-16 flex items-center justify-center rounded-2xl bg-white border-2 border-primary text-primary font-black text-xl shadow-xl mb-4 group-hover:bg-primary group-hover:text-white transition-all">
@@ -129,7 +137,12 @@ const VotingStep = ({ number, title, desc, icon: Icon, last }: { number: number,
   </div>
 );
 
-const StatBox = ({ icon: Icon, label, value, color }: { icon: any, label: string, value: string, color: string }) => (
+const StatBox = ({ icon: Icon, label, value, color }: { 
+  icon: React.ElementType;
+  label: string;
+  value: string;
+  color: string;
+}) => (
   <motion.div
     whileHover={{ y: -4 }}
     className="bg-white p-8 rounded-[32px] border border-border shadow-premium group hover:border-primary/20 transition-all duration-300"
@@ -260,7 +273,7 @@ export default function GovernancePage() {
               <div className="lg:col-span-2">
                  <h2 className="text-4xl font-black mb-6 tracking-tight leading-tight uppercase tracking-tighter">The Consensus <br /> Lifecycle</h2>
                  <p className="text-text-secondary font-medium leading-relaxed mb-10 italic">
-                   "A decentralized sequence designed for total capital accountability."
+                   &ldquo;A decentralized sequence designed for total capital accountability.&rdquo;
                  </p>
                  <div className="space-y-4">
                     <div className="flex items-center gap-4 text-xs font-black text-primary uppercase bg-primary/5 p-4 rounded-2xl border border-primary/20">
@@ -351,18 +364,14 @@ export default function GovernancePage() {
               </Link>
               <Link href="/faqs">
                 <button className="bg-white/10 text-white border border-white/20 text-xs font-black px-10 py-5 rounded-2xl hover:bg-white/20 transition-all backdrop-blur-md uppercase tracking-widest">
-                  View Intelligence
+                  View FAQs
                 </button>
               </Link>
             </div>
           </div>
         </motion.section>
 
-        <footer className="mt-32 pt-16 border-t border-border text-center">
-           <p className="text-[10px] font-black text-text-secondary uppercase tracking-[0.3em] opacity-40">
-             © 2024 TrustFundX. High-Authority Governance Infrastructure.
-           </p>
-        </footer>
+        <Footer />
       </main>
     </div>
   );

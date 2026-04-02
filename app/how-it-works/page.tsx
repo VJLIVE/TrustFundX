@@ -10,19 +10,15 @@ import {
   CheckCircle,
   ArrowRight,
   CircleDollarSign,
-  Users,
   Shield,
   Zap,
-  Clock,
   Activity,
-  Globe,
   Binary,
-  Layers,
-  ChevronRight,
   ShieldCheck,
   Cpu
 } from 'lucide-react';
 import { useWallet } from '@/contexts/WalletContext';
+import Footer from '../components/Footer';
 
 const Navbar = () => {
   const { accountAddress, isConnected } = useWallet();
@@ -39,7 +35,7 @@ const Navbar = () => {
           });
           const data = await res.json();
           if (res.ok && data.user) setUserRole(data.user.role);
-        } catch (err) {
+        } catch {
           setUserRole(null);
         }
       } else {
@@ -87,7 +83,14 @@ const Navbar = () => {
   );
 };
 
-const StepCard = ({ number, title, desc, icon: Icon, delay, last }: { number: number, title: string, desc: string, icon: any, delay: number, last?: boolean }) => (
+const StepCard = ({ number, title, desc, icon: Icon, delay, last }: { 
+  number: number;
+  title: string;
+  desc: string;
+  icon: React.ElementType;
+  delay: number;
+  last?: boolean;
+}) => (
   <motion.div
     initial={{ opacity: 0, x: -20 }}
     whileInView={{ opacity: 1, x: 0 }}
@@ -113,7 +116,11 @@ const StepCard = ({ number, title, desc, icon: Icon, delay, last }: { number: nu
   </motion.div>
 );
 
-const FeatureHighlight = ({ title, desc, icon: Icon }: { title: string, desc: string, icon: any }) => (
+const FeatureHighlight = ({ title, desc, icon: Icon }: { 
+  title: string;
+  desc: string;
+  icon: React.ElementType;
+}) => (
   <motion.div
     whileHover={{ y: -8 }}
     className="p-10 bg-white border border-border rounded-[40px] shadow-premium hover:shadow-2xl transition-all duration-500 group"
@@ -252,23 +259,14 @@ export default function HowItWorksPage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/signup">
                 <button className="bg-primary text-white text-xs font-black px-10 py-5 rounded-2xl hover:bg-primary/90 transition-all shadow-xl shadow-primary/20 hover:-translate-y-1 active:translate-y-0 flex items-center justify-center gap-2 uppercase tracking-widest">
-                  Deploy Identity <ArrowRight size={18} strokeWidth={3} />
-                </button>
-              </Link>
-              <Link href="/login">
-                <button className="bg-white/10 text-white border border-white/20 text-xs font-black px-10 py-5 rounded-2xl hover:bg-white/20 transition-all backdrop-blur-md uppercase tracking-widest">
-                  Connect Node
+                  Get Started <ArrowRight size={18} strokeWidth={3} />
                 </button>
               </Link>
             </div>
           </div>
         </motion.section>
 
-        <footer className="mt-32 pt-16 border-t border-border text-center">
-           <p className="text-[10px] font-black text-text-secondary uppercase tracking-[0.3em] opacity-40">
-             © 2024 TrustFundX. Sovereign Capital Infrastructure.
-           </p>
-        </footer>
+        <Footer />
       </main>
     </div>
   );

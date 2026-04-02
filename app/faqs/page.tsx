@@ -8,25 +8,20 @@ import {
   Wallet,
   ChevronDown,
   Search,
-  ArrowRight,
   HelpCircle,
   Shield,
   Zap,
   Users,
-  CreditCard,
-  Lock,
-  FileText,
   Activity,
-  Send,
   Loader2,
   Bot,
   Sparkles,
-  MessageSquare,
   Globe,
   LifeBuoy,
   X
 } from 'lucide-react';
 import { useWallet } from '@/contexts/WalletContext';
+import Footer from '../components/Footer';
 
 const Navbar = () => {
   const { accountAddress, isConnected } = useWallet();
@@ -43,7 +38,7 @@ const Navbar = () => {
           });
           const data = await res.json();
           if (res.ok && data.user) setUserRole(data.user.role);
-        } catch (err) {
+        } catch {
           setUserRole(null);
         }
       } else {
@@ -94,7 +89,7 @@ const Navbar = () => {
 interface FAQItemProps {
   question: string;
   answer: string;
-  icon: any;
+  icon: React.ElementType;
   category: string;
 }
 
@@ -219,7 +214,7 @@ export default function FAQsPage() {
       } else {
         setAiAnswer('**Protocol Error:** Intelligence node unreachable. Please re-initiate search.');
       }
-    } catch (error) {
+    } catch {
       setAiAnswer('**Connectivity Warning:** Failed to synchronize with platform context.');
     } finally {
       setIsAiLoading(false);
@@ -361,14 +356,7 @@ export default function FAQsPage() {
           )}
         </section>
 
-        <footer className="mt-32 pt-16 border-t border-border text-center">
-          <div className="flex items-center justify-center gap-8 text-[11px] font-black text-text-secondary uppercase tracking-[0.2em] mb-6">
-            <Link href="/how-it-works" className="hover:text-primary transition-colors">How it works</Link>
-            <Link href="/governance" className="hover:text-primary transition-colors">Governance</Link>
-            <Link href="/login" className="hover:text-primary transition-colors">Sign In</Link>
-          </div>
-          <p className="text-[10px] font-bold text-text-secondary uppercase tracking-widest opacity-40">© 2024 TrustFundX. Sovereign Capital Infrastructure.</p>
-        </footer>
+        <Footer />
       </main>
     </div>
   );
