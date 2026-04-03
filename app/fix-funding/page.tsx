@@ -11,8 +11,6 @@ import {
   Database, 
   AlertTriangle, 
   CheckCircle2, 
-  Search,
-  Activity,
   ShieldCheck,
   Cpu,
   Loader2
@@ -56,8 +54,8 @@ export default function FixFundingPage() {
       setTimeout(() => {
         router.push('/sponsors');
       }, 2000);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setLoading(false);
     }
