@@ -3,9 +3,9 @@
 
 // algopy.arc4.ARC4Contract.approval_program() -> uint64:
 main:
-    intcblock 0 1 8 32
-    bytecblock "sponsor" 0x0000000000000001 "team" "required_votes" "voters" "milestones"
-    // smart_contracts/getfund/contract.py:5
+    intcblock 1 0 8 32
+    bytecblock "sponsor" "team" "required_votes" "voters" "milestones"
+    // contract.py:4
     // class GetFund(ARC4Contract):
     txn NumAppArgs
     bz main___algopy_default_create@14
@@ -28,9 +28,9 @@ main___algopy_default_create@14:
     return
 
 
-// smart_contracts.getfund.contract.GetFund.create[routing]() -> void:
+// contract.GetFund.create[routing]() -> void:
 create:
-    // smart_contracts/getfund/contract.py:25-28
+    // contract.py:23-26
     // # -------------------------
     // # Create
     // # -------------------------
@@ -53,41 +53,41 @@ create:
     intc_2 // 8
     ==
     assert // invalid number of bytes for arc4.uint64
-    // smart_contracts/getfund/contract.py:35
+    // contract.py:33
     // self.sponsor.value = Txn.sender
     bytec_0 // "sponsor"
     txn Sender
     app_global_put
-    // smart_contracts/getfund/contract.py:36
+    // contract.py:34
     // self.team.value = team
-    bytec_2 // "team"
+    bytec_1 // "team"
     uncover 3
     app_global_put
-    // smart_contracts/getfund/contract.py:37
+    // contract.py:35
     // self.required_votes.value = required_votes.native
     swap
     btoi
-    bytec_3 // "required_votes"
+    bytec_2 // "required_votes"
     swap
     app_global_put
-    // smart_contracts/getfund/contract.py:38
+    // contract.py:36
     // self.milestone_count.value = milestone_count.native
     btoi
     pushbytes "milestone_count"
     swap
     app_global_put
-    // smart_contracts/getfund/contract.py:25-28
+    // contract.py:23-26
     // # -------------------------
     // # Create
     // # -------------------------
     // @arc4.abimethod
-    intc_1 // 1
+    intc_0 // 1
     return
 
 
-// smart_contracts.getfund.contract.GetFund.init_voter[routing]() -> void:
+// contract.GetFund.init_voter[routing]() -> void:
 init_voter:
-    // smart_contracts/getfund/contract.py:40-43
+    // contract.py:38-41
     // # -------------------------
     // # Register Voter
     // # -------------------------
@@ -98,34 +98,36 @@ init_voter:
     intc_3 // 32
     ==
     assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
-    // smart_contracts/getfund/contract.py:45
+    // contract.py:43
     // assert Txn.sender == self.sponsor.value
     txn Sender
-    intc_0 // 0
+    intc_1 // 0
     bytec_0 // "sponsor"
     app_global_get_ex
     assert // check self.sponsor exists
     ==
     assert
-    // smart_contracts/getfund/contract.py:46
+    // contract.py:44
     // self.voters[voter] = arc4.UInt64(1)
-    bytec 4 // "voters"
-    swap
+    intc_0 // 1
+    itob
+    bytec_3 // "voters"
+    uncover 2
     concat
-    bytec_1 // 0x0000000000000001
+    swap
     box_put
-    // smart_contracts/getfund/contract.py:40-43
+    // contract.py:38-41
     // # -------------------------
     // # Register Voter
     // # -------------------------
     // @arc4.abimethod
-    intc_1 // 1
+    intc_0 // 1
     return
 
 
-// smart_contracts.getfund.contract.GetFund.init_milestone[routing]() -> void:
+// contract.GetFund.init_milestone[routing]() -> void:
 init_milestone:
-    // smart_contracts/getfund/contract.py:48-51
+    // contract.py:46-49
     // # -------------------------
     // # Initialize Milestone
     // # -------------------------
@@ -142,19 +144,19 @@ init_milestone:
     intc_2 // 8
     ==
     assert // invalid number of bytes for arc4.uint64
-    // smart_contracts/getfund/contract.py:58
+    // contract.py:55
     // assert Txn.sender == self.sponsor.value
     txn Sender
-    intc_0 // 0
+    intc_1 // 0
     bytec_0 // "sponsor"
     app_global_get_ex
     assert // check self.sponsor exists
     ==
     assert
-    // smart_contracts/getfund/contract.py:62
+    // contract.py:59
     // amount.native,
     btoi
-    // smart_contracts/getfund/contract.py:60-65
+    // contract.py:57-62
     // # (amount, approvals, paid)
     // self.milestones[milestone_id.native] = arc4.Tuple((
     //     amount.native,
@@ -162,10 +164,10 @@ init_milestone:
     //     UInt64(0),
     // ))
     itob
-    // smart_contracts/getfund/contract.py:63
+    // contract.py:60
     // UInt64(0),
-    intc_0 // 0
-    // smart_contracts/getfund/contract.py:60-65
+    intc_1 // 0
+    // contract.py:57-62
     // # (amount, approvals, paid)
     // self.milestones[milestone_id.native] = arc4.Tuple((
     //     amount.native,
@@ -178,16 +180,16 @@ init_milestone:
     concat
     swap
     concat
-    // smart_contracts/getfund/contract.py:60-61
+    // contract.py:57-58
     // # (amount, approvals, paid)
     // self.milestones[milestone_id.native] = arc4.Tuple((
     swap
     btoi
     itob
-    bytec 5 // "milestones"
+    bytec 4 // "milestones"
     swap
     concat
-    // smart_contracts/getfund/contract.py:60-65
+    // contract.py:57-62
     // # (amount, approvals, paid)
     // self.milestones[milestone_id.native] = arc4.Tuple((
     //     amount.native,
@@ -196,18 +198,18 @@ init_milestone:
     // ))
     swap
     box_put
-    // smart_contracts/getfund/contract.py:48-51
+    // contract.py:46-49
     // # -------------------------
     // # Initialize Milestone
     // # -------------------------
     // @arc4.abimethod
-    intc_1 // 1
+    intc_0 // 1
     return
 
 
-// smart_contracts.getfund.contract.GetFund.approve[routing]() -> void:
+// contract.GetFund.approve[routing]() -> void:
 approve:
-    // smart_contracts/getfund/contract.py:67-70
+    // contract.py:64-67
     // # -------------------------
     // # Approve Milestone
     // # -------------------------
@@ -218,190 +220,198 @@ approve:
     intc_2 // 8
     ==
     assert // invalid number of bytes for arc4.uint64
-    // smart_contracts/getfund/contract.py:73-74
+    // contract.py:69-70
     // # must be registered voter
     // assert self.voters[Txn.sender] == arc4.UInt64(1)
-    bytec 4 // "voters"
+    bytec_3 // "voters"
     txn Sender
     concat
     box_get
     assert // check self.voters entry exists
-    bytec_1 // 0x0000000000000001
+    intc_0 // 1
+    itob
+    dup
+    cover 3
+    swap
+    dig 1
     b==
     assert
-    // smart_contracts/getfund/contract.py:76-77
-    // # prevent double vote
+    // contract.py:72-74
+    // # FIXED: Use direct box access instead of .maybe() to avoid compiler bug
+    // # Check if vote already exists by trying to read it
     // vote_key = arc4.Tuple((milestone_id, arc4.Address(Txn.sender)))
-    dup
+    dig 1
     txn Sender
     concat
-    // smart_contracts/getfund/contract.py:78
-    // assert not self.votes.maybe(vote_key)
+    // contract.py:76-79
+    // # The vote box should not exist yet (prevent double voting)
+    // # We'll let it fail naturally if the box already exists when we try to create it
+    // # Or we can use a different approach: check the value
+    // existing_vote = self.votes.get(vote_key, default=arc4.UInt64(0))
     pushbytes "votes"
     swap
     concat
-    intc_0 // 0
-    assert
-    // smart_contracts/getfund/contract.py:80
+    intc_1 // 0
+    itob
+    dup
+    cover 2
+    cover 4
+    dup
+    box_get
+    dig 3
+    cover 2
+    select
+    // contract.py:80
+    // assert existing_vote == arc4.UInt64(0), "Already voted"
+    uncover 2
+    b==
+    assert // Already voted
+    // contract.py:82
     // milestone_data = self.milestones[milestone_id.native]
-    swap
+    uncover 2
     btoi
     itob
-    bytec 5 // "milestones"
+    bytec 4 // "milestones"
     swap
     concat
     dup
-    cover 2
+    cover 4
     box_get
     assert // check self.milestones entry exists
-    // smart_contracts/getfund/contract.py:81
+    // contract.py:83
     // amount = milestone_data[0]
     dup
-    intc_0 // 0
+    intc_1 // 0
     extract_uint64
     cover 3
-    // smart_contracts/getfund/contract.py:82
+    // contract.py:84
     // approvals = milestone_data[1]
     dup
     intc_2 // 8
     extract_uint64
-    // smart_contracts/getfund/contract.py:83
+    // contract.py:85
     // paid = milestone_data[2]
     swap
     pushint 16
     extract_uint64
-    // smart_contracts/getfund/contract.py:85
+    // contract.py:87
     // assert paid == UInt64(0)
     !
     assert
-    // smart_contracts/getfund/contract.py:87
+    // contract.py:89
     // approvals = approvals + UInt64(1)
-    intc_1 // 1
+    intc_0 // 1
     +
     dup
     cover 3
-    // smart_contracts/getfund/contract.py:89
+    // contract.py:91
     // self.votes[vote_key] = arc4.UInt64(1)
     swap
-    bytec_1 // 0x0000000000000001
+    uncover 2
     box_put
-    // smart_contracts/getfund/contract.py:91
+    // contract.py:93
     // if approvals >= self.required_votes.value:
-    intc_0 // 0
-    bytec_3 // "required_votes"
+    intc_1 // 0
+    bytec_2 // "required_votes"
     app_global_get_ex
     assert // check self.required_votes exists
     >=
     bz approve_else_body@4
-    // smart_contracts/getfund/contract.py:93-96
+    uncover 2
+    pop
+    // contract.py:94-97
     // Payment(
     //     receiver=self.team.value,
     //     amount=amount,
     // ).submit()
     itxn_begin
-    // smart_contracts/getfund/contract.py:94
+    // contract.py:95
     // receiver=self.team.value,
-    intc_0 // 0
-    bytec_2 // "team"
+    intc_1 // 0
+    bytec_1 // "team"
     app_global_get_ex
     assert // check self.team exists
-    dig 3
+    uncover 2
     dup
     cover 2
     itxn_field Amount
     itxn_field Receiver
-    // smart_contracts/getfund/contract.py:93
+    // contract.py:94
     // Payment(
-    intc_1 // pay
+    intc_0 // pay
     itxn_field TypeEnum
-    intc_0 // 0
+    intc_1 // 0
     itxn_field Fee
-    // smart_contracts/getfund/contract.py:93-96
+    // contract.py:94-97
     // Payment(
     //     receiver=self.team.value,
     //     amount=amount,
     // ).submit()
     itxn_submit
-    // smart_contracts/getfund/contract.py:98-102
+    // contract.py:99-103
     // self.milestones[milestone_id.native] = arc4.Tuple((
     //     amount,
     //     approvals,
     //     UInt64(1),
     // ))
     itob
-    uncover 2
+    swap
     itob
     concat
-    // smart_contracts/getfund/contract.py:101
-    // UInt64(1),
-    intc_1 // 1
-    // smart_contracts/getfund/contract.py:98-102
-    // self.milestones[milestone_id.native] = arc4.Tuple((
-    //     amount,
-    //     approvals,
-    //     UInt64(1),
-    // ))
-    itob
+    uncover 2
     concat
     box_put
 
 approve_after_if_else@5:
-    // smart_contracts/getfund/contract.py:67-70
+    // contract.py:64-67
     // # -------------------------
     // # Approve Milestone
     // # -------------------------
     // @arc4.abimethod
-    intc_1 // 1
+    intc_0 // 1
     return
 
 approve_else_body@4:
-    // smart_contracts/getfund/contract.py:104-108
+    uncover 4
+    pop
+    // contract.py:105-109
     // self.milestones[milestone_id.native] = arc4.Tuple((
     //     amount,
     //     approvals,
     //     UInt64(0),
     // ))
-    dig 2
+    swap
     itob
-    uncover 2
+    swap
     itob
     concat
-    // smart_contracts/getfund/contract.py:107
-    // UInt64(0),
-    intc_0 // 0
-    // smart_contracts/getfund/contract.py:104-108
-    // self.milestones[milestone_id.native] = arc4.Tuple((
-    //     amount,
-    //     approvals,
-    //     UInt64(0),
-    // ))
-    itob
+    swap
     concat
     box_put
     b approve_after_if_else@5
 
 
-// smart_contracts.getfund.contract.GetFund.fund[routing]() -> void:
+// contract.GetFund.fund[routing]() -> void:
 fund:
-    // smart_contracts/getfund/contract.py:116-117
+    // contract.py:116-117
     // # must be sponsor
     // assert Txn.sender == self.sponsor.value
     txn Sender
-    intc_0 // 0
+    intc_1 // 0
     bytec_0 // "sponsor"
     app_global_get_ex
     assert // check self.sponsor exists
     ==
     assert
-    // smart_contracts/getfund/contract.py:119-120
+    // contract.py:119-120
     // # must send positive payment amount
     // assert Txn.amount > UInt64(0)
     txn Amount
     assert
-    // smart_contracts/getfund/contract.py:110-113
+    // contract.py:111-114
     // # -------------------------
     // # Fund Contract
     // # -------------------------
     // @arc4.abimethod
-    intc_1 // 1
+    intc_0 // 1
     return
